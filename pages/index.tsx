@@ -17,7 +17,7 @@ export default function Home() {
           <span>Total</span>
           <span className="font-semibold">$99</span>
         </div>
-        <button className="mt-5 mx-auto w-2/4 bg-blue-500 text-white rounded-xl p-3">
+        <button className="mt-5 mx-auto w-2/4 bg-blue-500 text-white rounded-xl p-3 transition hover:bg-blue-400 hover:text-yellow-300">
           Checkout
         </button>
       </div>
