@@ -5,14 +5,24 @@ export default function Home() {
         <span className="w-full text-left font-semibold text-3xl">
           Select Item
         </span>
-        <div className="w-full flex justify-between my-2">
-          <span className="text-gray-500">Grey Chair</span>
-          <span className="font-semibold">$19</span>
-        </div>
-        <div className="w-full flex justify-between">
-          <span className="text-gray-500">Tooly Table</span>
-          <span className="font-semibold">$80</span>
-        </div>
+        <ul className="w-full">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className="flex justify-between my-2 even:bg-yellow-50 odd:bg-blue-50"
+            >
+              <span className="text-gray-500">Grey Chair</span>
+              <span className="font-semibold">$19</span>
+            </div>
+          ))}
+        </ul>
+        <ul className="w-full">
+          {["a", "b", "c", ""].map((item, index) => (
+            <li key={index} className="bg-yellow-50 py-2 empty:bg-yellow-400">
+              {item}
+            </li>
+          ))}
+        </ul>
         <div className="w-full flex justify-between border-t-2 border-dashed mt-2 pt-2">
           <span>Total</span>
           <span className="font-semibold">$99</span>
@@ -56,10 +66,10 @@ export default function Home() {
           <span className="font-medium text-xl">Swoon Lounge</span>
           <span className="text-xs text-gray-500">Chair</span>
           <div className="mt-3 mb-5 flex justify-between items-center">
-            <div className="space-x-2">
-              <button className="w-5 h-5 rounded-full bg-yellow-400"></button>
-              <button className="w-5 h-5 rounded-full bg-pink-400"></button>
-              <button className="w-5 h-5 rounded-full bg-blue-400"></button>
+            <div className="space-x-3">
+              <button className="w-5 h-5 rounded-full  bg-yellow-400 focus:ring-2 ring-offset-2 focus:ring-yellow-400 transition"></button>
+              <button className="w-5 h-5 rounded-full  bg-pink-400 focus:ring-2 ring-offset-2 focus:ring-pink-400 transition"></button>
+              <button className="w-5 h-5 rounded-full  bg-blue-400 focus:ring-2 ring-offset-2 focus:ring-blue-400 transition"></button>
             </div>
             <div className="flex items-center space-x-5">
               <button className="rounded-lg bg-blue-200 flex justify-center items-center aspect-square w-8 text-xl text-gray-500">
