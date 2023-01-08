@@ -31,7 +31,7 @@ export default function Home() {
           Checkout
         </button>
       </div>
-      <div className="bg-white overflow-hidden rounded-2xl shadow-2xl">
+      <div className="bg-white overflow-hidden rounded-2xl shadow-2xl group">
         <div className="bg-blue-500 p-6 pb-14">
           <span className="text-white text-2xl">Profile</span>
         </div>
@@ -41,7 +41,7 @@ export default function Home() {
               <span className="text-sm text-gray-500">Orders</span>
               <span className="font-medium">340</span>
             </div>
-            <div className="h-24 w-24 rounded-full bg-yellow-400" />
+            <div className="h-24 w-24 rounded-full bg-yellow-400 group-hover:bg-pink-400 transition-colors" />
             <div className="flex flex-col items-center">
               <span className="text-sm text-gray-500">Spent</span>
               <span className="font-medium">$2,310</span>
@@ -88,6 +88,29 @@ export default function Home() {
             </button>
           </div>
         </div>
+      </div>
+      <div className="bg-white p-10 rounded-2xl shadow-2xl">
+        <form className="flex flex-col space-y-2 bg-blue-400 rounded-2xl p-5 focus-within:bg-blue-50 transition-colors">
+          <input
+            type="text"
+            required
+            placeholder="Username"
+            className="peer required:bg-yellow-50 invalid:border invalid:border-pink-400 valid:bg-blue-400 valid:text-white rounded-md transition-colors"
+          />
+          <span className="peer-invalid:text-pink-400 peer-valid:hidden">
+            this input is invalid
+          </span>
+          <span className="peer-invalid:hidden">
+            👍
+          </span>
+          <input
+            type="password"
+            required
+            placeholder="Password"
+            className="required:bg-yellow-50 invalid:border invalid:border-pink-400 valid:bg-blue-400 valid:text-white rounded-md transition-colors"
+          />
+          <input type="submit" value="login" className="text-white" />
+        </form>
       </div>
     </div>
   );
