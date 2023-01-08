@@ -41,7 +41,7 @@ export default function Home() {
               <span className="text-sm text-gray-500">Orders</span>
               <span className="font-medium">340</span>
             </div>
-            <div className="h-24 w-24 rounded-full bg-yellow-400 group-hover:bg-pink-400 transition-colors" />
+            <div className="h-24 w-24 rounded-full bg-[#F4BC1F] group-hover:bg-pink-400 transition-colors" />
             <div className="flex flex-col items-center">
               <span className="text-sm text-gray-500">Spent</span>
               <span className="font-medium">$2,310</span>
