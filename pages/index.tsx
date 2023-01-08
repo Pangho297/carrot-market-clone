@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <div className="bg-slate-400 py-20 px-20 grid gap-5 min-h-screen">
-      <div className="bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center">
+    <div className="bg-slate-400 dark dark:bg-slate-700 py-20 px-20 grid gap-10 lg:grid-cols-2 xl:grid-cols-4 xl:place-content-center min-h-screen">
+      <div className="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-3xl shadow-2xl flex flex-col justify-between items-center">
         <span className="w-full text-left font-semibold text-3xl">
           Select Item
         </span>
@@ -27,12 +27,12 @@ export default function Home() {
           <span>Total</span>
           <span className="font-semibold">$99</span>
         </div>
-        <button className="mt-5 mx-auto w-2/4 bg-blue-500 text-white rounded-xl p-3 transition hover:bg-blue-400 hover:text-yellow-300">
+        <button className="mt-5 mx-auto w-2/4 bg-blue-500 text-white dark:bg-slate-700 rounded-xl p-3 transition hover:bg-blue-400 hover:text-yellow-300">
           Checkout
         </button>
       </div>
       <div className="bg-white overflow-hidden rounded-2xl shadow-2xl group">
-        <div className="bg-blue-500 p-6 pb-14">
+        <div className="bg-blue-500 landscape:bg-pink-400 p-6 pb-14 lg:pb-48 xl:pb-56">
           <span className="text-white text-2xl">Profile</span>
         </div>
         <div className="rounded-3xl p-6 bg-white relative -top-5">
@@ -89,8 +89,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-white p-10 rounded-2xl shadow-2xl">
-        <form className="flex flex-col space-y-2 bg-blue-400 rounded-2xl p-5 focus-within:bg-blue-50 transition-colors">
+      <div className="bg-white p-10 rounded-2xl shadow-2xl flex justify-center items-center">
+        <form className="w-full flex flex-col space-y-2 bg-blue-400 rounded-2xl p-5 focus-within:bg-blue-50 transition-colors">
           <input
             type="text"
             required
@@ -100,9 +100,7 @@ export default function Home() {
           <span className="peer-invalid:text-pink-400 peer-valid:hidden">
             this input is invalid
           </span>
-          <span className="peer-invalid:hidden">
-            👍
-          </span>
+          <span className="peer-invalid:hidden">👍</span>
           <input
             type="password"
             required

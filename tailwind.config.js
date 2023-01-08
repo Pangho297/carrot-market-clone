@@ -7,5 +7,6 @@ module.exports = {
   theme: {
     extend: {},
   },
+  darkMode: "class", //기본값은 media
   plugins: [],
 }
