@@ -9,7 +9,7 @@ export default function Enter() {
   const onPhoneClick = () => setMethod("phone");
 
   return (
-    <div className="mt-16">
+    <div className="mt-16 px-4">
       <h3 className="text-4xl font-bold text-center">Enter to Carrot</h3>
       <div className="mt-16">
         <div className="flex flex-col items-center">
@@ -39,13 +39,19 @@ export default function Enter() {
             </button>
           </div>
         </div>
-        <form>
-          <label>
+        <form className="flex flex-col mt-8">
+          <label className="text-sm font-medium text-gray-700">
             {method === "email" ? "Email address" : null}
             {method === "phone" ? "Phone number" : null}
           </label>
-          <div>
-            {method === "email" ? <input type="email" required /> : null}
+          <div className="mt-1">
+            {method === "email" ? (
+              <input
+                type="email"
+                className="appearance-none w-full px-3 py2 border border-gray-400 rounded-md shadow-sm placeholder-gray-400 focus: outline-none focus:ring-yellow-400 focus:border-yellow-400"
+                required
+              />
+            ) : null}
             {method === "phone" ? (
               <div>
                 <span>+82</span>
@@ -53,7 +59,7 @@ export default function Enter() {
               </div>
             ) : null}
           </div>
-          <button>
+          <button className="bg-yellow-400 hover:bg-yellow-300 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2">
             {method === "email" ? "Get login link" : null}
             {method === "phone" ? "Get one-time password" : null}
           </button>
