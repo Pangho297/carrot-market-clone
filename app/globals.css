@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/** 기본 값으로 지정할 전역 스타일 지정 */
+@layer base {
+  a {
+    @apply text-blue-500;
+  }
+}
+
+/** 적용해야 할 css가 많고 반복적인 요소들을 컴포넌트화 시키는 것을 추천한다 */
+@layer componetns {
+  .display-center {
+    @apply flex items-center justify-center;
+  }
+}
+
+/** 애플리케이션 모든곳에서 사용할 수 있는 class를 만들 때 사용 */
+@layer utilities {
+  .custom-text {
+    @apply text-3xl font-semibold;
+  }
+}
