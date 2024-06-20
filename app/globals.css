@@ -10,9 +10,13 @@
 }
 
 /** 적용해야 할 css가 많고 반복적인 요소들을 컴포넌트화 시키는 것을 추천한다 */
-@layer componetns {
+@layer components {
   .display-center {
     @apply flex items-center justify-center;
+  }
+
+  .primary-btn {
+    @apply w-full rounded-md bg-orange-500 py-2.5 text-center font-medium text-white transition-colors hover:bg-orange-400 hover:no-underline;
   }
 }
 
