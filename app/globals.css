@@ -5,7 +5,7 @@
 /** 기본 값으로 지정할 전역 스타일 지정 */
 @layer base {
   a {
-    @apply text-blue-500;
+    @apply text-orange-500 underline-offset-2 hover:underline;
   }
 }
 

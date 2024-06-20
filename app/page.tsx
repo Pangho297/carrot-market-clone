@@ -1,20 +1,25 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
-    <main className="flex h-screen items-center justify-center bg-gray-100 p-5 sm:bg-red-100 md:bg-green-100 lg:bg-cyan-100 xl:bg-orange-100 2xl:bg-purple-100">
-      <div className="flex w-full max-w-screen-sm flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg">
-        {["Pangho", "Eunji", "You", "Me", ""].map((person, index) => (
-          <div key={index} className="group flex items-center gap-5">
-            <div className="size-10 rounded-full bg-blue-400" />
-            <span className="text-lg font-medium empty:h-5 empty:w-40 empty:animate-pulse empty:rounded-full empty:bg-gray-200 group-hover:text-cyan-500">
-              {person}
-            </span>
-            <div className="relative flex size-6 items-center justify-center rounded-full bg-red-500 text-white">
-              <span className="z-10">{index + 1}</span>
-              <div className="p-my absolute size-6 animate-ping rounded-full bg-red-500" />
-            </div>
-          </div>
-        ))}
+    <div className="flex min-h-screen flex-col items-center justify-between p-6">
+      <div className="my-auto flex flex-col items-center gap-2 *:font-medium">
+        <span className="text-9xl">🥕</span>
+        <h1 className="text-4xl">당근</h1>
+        <h2>당근 마켓에 어서오세요!</h2>
       </div>
-    </main>
+      <div className="flex w-full flex-col items-center gap-3">
+        <Link
+          href="/signup"
+          className="w-full rounded-md bg-orange-500 py-2.5 text-center text-lg font-medium text-white transition-colors hover:bg-orange-400 hover:no-underline"
+        >
+          시작하기
+        </Link>
+        <div className="flex gap-2">
+          <span>이미 계정이 있나요?</span>
+          <Link href="/login">로그인</Link>
+        </div>
+      </div>
+    </div>
   );
 }
