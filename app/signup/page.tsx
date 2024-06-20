@@ -1,7 +1,6 @@
 import FormButton from "@/components/form-btn";
 import FormInput from "@/components/form-input";
-import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/solid";
-import Link from "next/link";
+import SocialLogin from "@/components/social-login";
 
 export default function Signup() {
   return (
@@ -40,18 +39,7 @@ export default function Signup() {
         </FormButton>
       </form>
       {/* 구분선 */}
-      <div className="h-px w-full bg-neutral-500" />
-      <div>
-        <Link
-          className="primary-btn flex h-10 items-center justify-center gap-2"
-          href="/sns"
-        >
-          <span>
-            <ChatBubbleOvalLeftEllipsisIcon className="size-6" />
-          </span>
-          <span>SNS를 이용해 회원가입</span>
-        </Link>
-      </div>
+      <SocialLogin />
     </div>
   );
 }
