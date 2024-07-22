@@ -1,11 +1,13 @@
 import FormButton from "@/components/form-btn";
 import FormInput from "@/components/form-input";
 import SocialLogin from "@/components/social-login";
+import { useFormStatus } from "react-dom";
 
 export default function Login() {
   async function onSubmit(formData: FormData) {
     "use server"; // Server Action을 사용하기 위한 선언, 서버에서만 실행된다
 
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // 임의의 지연 처리
     console.log(formData.get("email"), formData.get("password"));
   }
 
@@ -33,7 +35,7 @@ export default function Login() {
           errorMessage={["비밀번호를 입력해 주세요"]}
         />
 
-        <FormButton disabled={false}>로그인</FormButton>
+        <FormButton>로그인</FormButton>
       </form>
       {/* 구분선 */}
       <SocialLogin />
