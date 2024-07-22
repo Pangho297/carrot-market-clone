@@ -20,24 +20,28 @@ export default function Signup() {
           placeholder="사용자명을 입력해 주세요"
           name="username"
           required
+          errorMessage={state?.fieldErrors.username}
         />
         <FormInput
           type="email"
           placeholder="이메일을 입력해 주세요."
           name="email"
           required
+          errorMessage={state?.fieldErrors.email}
         />
         <FormInput
           type="password"
           placeholder="비밀번호를 입력해 주세요"
           name="password"
           required
+          errorMessage={state?.fieldErrors.password}
         />
         <FormInput
           type="password"
           placeholder="비밀번호를 확인해 주세요"
           name="confirm_password"
           required
+          errorMessage={state?.fieldErrors.confirm_password}
         />
 
         <FormButton loadingText="회원가입 중입니다...">회원가입</FormButton>
