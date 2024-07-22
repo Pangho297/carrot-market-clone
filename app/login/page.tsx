@@ -1,15 +1,13 @@
+"use client";
+
 import FormButton from "@/components/form-btn";
 import FormInput from "@/components/form-input";
 import SocialLogin from "@/components/social-login";
-import { useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
+import { onSubmit } from "./action";
 
 export default function Login() {
-  async function onSubmit(formData: FormData) {
-    "use server"; // Server Action을 사용하기 위한 선언, 서버에서만 실행된다
-
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // 임의의 지연 처리
-    console.log(formData.get("email"), formData.get("password"));
-  }
+  const [state, action] = useFormState(onSubmit, null);
 
   return (
     <div className="flex flex-col gap-10 py-6">
@@ -19,7 +17,7 @@ export default function Login() {
           로그인을 위해 이메일과 비밀번호를 입력해주세요!
         </h2>
       </div>
-      <form className="flex flex-col gap-3" action={onSubmit}>
+      <form className="flex flex-col gap-3" action={action}>
         <FormInput
           type="email"
           name="email"
@@ -32,7 +30,7 @@ export default function Login() {
           name="password"
           placeholder="비밀번호를 입력해 주세요"
           required
-          errorMessage={["비밀번호를 입력해 주세요"]}
+          errorMessage={state?.errors ?? []}
         />
 
         <FormButton>로그인</FormButton>
