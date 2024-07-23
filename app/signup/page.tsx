@@ -1,7 +1,7 @@
 "use client";
 
-import FormButton from "@/components/form-btn";
-import FormInput from "@/components/form-input";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
 import SocialLogin from "@/components/social-login";
 import { createAccount } from "./actions";
 import { useFormState } from "react-dom";
@@ -16,35 +16,39 @@ export default function Signup() {
         <h2 className="text-xl">회원가입을 위해 아래 양식을 작성하세요!</h2>
       </div>
       <form action={dispatch} className="flex flex-col gap-3">
-        <FormInput
+        <Input
           placeholder="사용자명을 입력해 주세요"
           name="username"
           required
           errorMessage={state?.fieldErrors.username}
+          minLength={3}
+          maxLength={10}
         />
-        <FormInput
+        <Input
           type="email"
           placeholder="이메일을 입력해 주세요."
           name="email"
           required
           errorMessage={state?.fieldErrors.email}
         />
-        <FormInput
+        <Input
           type="password"
           placeholder="비밀번호를 입력해 주세요"
           name="password"
           required
           errorMessage={state?.fieldErrors.password}
+          minLength={4}
         />
-        <FormInput
+        <Input
           type="password"
           placeholder="비밀번호를 확인해 주세요"
           name="confirm_password"
           required
           errorMessage={state?.fieldErrors.confirm_password}
+          minLength={4}
         />
 
-        <FormButton loadingText="회원가입 중입니다...">회원가입</FormButton>
+        <Button loadingText="회원가입 중입니다...">회원가입</Button>
       </form>
       {/* 구분선 */}
       <SocialLogin />

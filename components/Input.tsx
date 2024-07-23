@@ -1,14 +1,11 @@
-import { DetailedHTMLProps, InputHTMLAttributes } from "react";
+import { InputHTMLAttributes } from "react";
 
-interface Props
-  extends DetailedHTMLProps<
-    InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
+  name: string; // name 값을 넣는것을 강제하기 위해 추가
   errorMessage?: string[];
 }
 
-export default function FormInput({ errorMessage, ...rest }: Props) {
+export default function Input({ errorMessage = [], ...rest }: Props) {
   return (
     <div className="flex flex-col gap-2">
       <input

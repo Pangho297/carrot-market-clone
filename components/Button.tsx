@@ -11,7 +11,7 @@ interface Props
   loadingText?: string;
 }
 
-export default function FormButton({ loadingText, ...rest }: Props) {
+export default function Button({ loadingText, ...rest }: Props) {
   const { pending } = useFormStatus();
 
   return (
