@@ -10,7 +10,7 @@ interface FormSchema {
 }
 
 const passwordRegex = new RegExp(
-  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$/
+  /^(?=.*?[a-zA-Z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$/
 );
 
 const checkPasswords = ({ password, confirm_password }: FormSchema) =>
@@ -42,7 +42,7 @@ const formSchema: z.ZodType<FormSchema> = z
       .min(4, "비밀번호는 4자리 이상으로 만들어주세요")
       .regex(
         passwordRegex,
-        "비밀번호는 소문자, 대문자, 숫자, 특수문자를 포함해야 합니다"
+        "비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다"
       ),
     confirm_password: z.string().min(10),
   })
