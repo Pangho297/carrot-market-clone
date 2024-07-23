@@ -5,6 +5,7 @@ import Input from "@/components/Input";
 import SocialLogin from "@/components/social-login";
 import { createAccount } from "./actions";
 import { useFormState } from "react-dom";
+import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 
 export default function Signup() {
   const [state, dispatch] = useFormState(createAccount, null);
@@ -21,8 +22,6 @@ export default function Signup() {
           name="username"
           required
           errorMessage={state?.fieldErrors.username}
-          minLength={3}
-          maxLength={10}
         />
         <Input
           type="email"
@@ -37,7 +36,7 @@ export default function Signup() {
           name="password"
           required
           errorMessage={state?.fieldErrors.password}
-          minLength={4}
+          minLength={PASSWORD_MIN_LENGTH}
         />
         <Input
           type="password"
@@ -45,7 +44,7 @@ export default function Signup() {
           name="confirm_password"
           required
           errorMessage={state?.fieldErrors.confirm_password}
-          minLength={4}
+          minLength={PASSWORD_MIN_LENGTH}
         />
 
         <Button loadingText="회원가입 중입니다...">회원가입</Button>
