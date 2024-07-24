@@ -28,7 +28,6 @@ export async function smsLogin(prev: ActionState, formData: FormData) {
 
     // 휴대전화 유효성 검사
     if (!result.success) {
-      console.log(result.error);
       // 실패
       return { token: false, error: result.error.flatten() };
     } else {
