@@ -11,6 +11,7 @@ import {
 } from "@/lib/constants";
 import db from "@/lib/db";
 import { z } from "zod";
+import bcrypt from "bcrypt";
 
 interface FormSchema {
   username: string;
@@ -94,8 +95,30 @@ export async function createAccount(prev: any, formData: FormData) {
     console.log(result.error.flatten());
     return result.error.flatten();
   } else {
+    const { username, email, password } = result.data;
+
     // 비밀번호 hashing
-    // 모두 통과하면 DB에 유저정보 저장
+    bcrypt.hash(password, 12, async (err, hashedPassword) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      // 모두 통과하면 DB에 유저정보 저장
+      const user = await db.user.create({
+        data: {
+          username,
+          email,
+          password: hashedPassword,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      console.log(user);
+    });
+
     // 사용자 로그인
     // 사용자 redirect
   }
