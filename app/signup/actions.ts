@@ -12,6 +12,9 @@ import {
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface FormSchema {
   username: string;
@@ -82,6 +85,7 @@ const formSchema: z.ZodType<FormSchema> = z
   });
 
 export async function createAccount(prev: any, formData: FormData) {
+  console.log(cookies());
   const data = {
     username: formData.get("username"),
     email: formData.get("email"),
@@ -98,28 +102,34 @@ export async function createAccount(prev: any, formData: FormData) {
     const { username, email, password } = result.data;
 
     // 비밀번호 hashing
-    bcrypt.hash(password, 12, async (err, hashedPassword) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-      // 모두 통과하면 DB에 유저정보 저장
-      const user = await db.user.create({
-        data: {
-          username,
-          email,
-          password: hashedPassword,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      console.log(user);
+    // 모두 통과하면 DB에 유저정보 저장
+    const user = await db.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+      },
     });
 
+    console.log(user);
+
     // 사용자 로그인
+    const cookie = await getIronSession(cookies(), {
+      cookieName: "LOGIN",
+      password: process.env.COOKIE_PASSWORD!,
+    });
+
+    // @ts-ignore
+    cookie.id = user.id;
+
+    await cookie.save();
+
     // 사용자 redirect
+    redirect("/profile");
   }
 }
