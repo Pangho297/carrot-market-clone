@@ -15,6 +15,7 @@ import bcrypt from "bcrypt";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import getSession from "@/lib/session";
 
 interface FormSchema {
   username: string;
@@ -93,7 +94,7 @@ export async function createAccount(prev: any, formData: FormData) {
     confirm_password: formData.get("confirm_password"),
   };
 
-  const result = await formSchema.safeParseAsync(data);
+  const result = await formSchema.spa(data);
 
   if (!result.success) {
     console.log(result.error.flatten());
@@ -119,15 +120,9 @@ export async function createAccount(prev: any, formData: FormData) {
     console.log(user);
 
     // 사용자 로그인
-    const cookie = await getIronSession(cookies(), {
-      cookieName: "LOGIN",
-      password: process.env.COOKIE_PASSWORD!,
-    });
-
-    // @ts-ignore
-    cookie.id = user.id;
-
-    await cookie.save();
+    const session = await getSession(); // 세션 토큰 생성
+    session.id = user.id;
+    await session.save(); // 세션 토큰 저장 및 유저 정보 암호화
 
     // 사용자 redirect
     redirect("/profile");
