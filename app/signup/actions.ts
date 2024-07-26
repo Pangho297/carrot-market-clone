@@ -24,32 +24,6 @@ interface FormSchema {
 
 const checkPasswords = ({ password, confirm_password }: FormSchema) =>
   password === confirm_password;
-// 유효성을 통과한 경우 DB에 동일한 username, email이 존재하는지 확인
-// const checkUniqueUsername = async (username: string) => {
-//   const user = await db.user.findUnique({
-//     where: {
-//       username,
-//     },
-//     select: {
-//       id: true,
-//     },
-//   });
-
-//   return !Boolean(user);
-// };
-
-// const checkUniqueEmail = async (email: string) => {
-//   const user = await db.user.findUnique({
-//     where: {
-//       email,
-//     },
-//     select: {
-//       id: true,
-//     },
-//   });
-
-//   return !Boolean(user);
-// };
 
 const formSchema: z.ZodType<FormSchema> = z
   .object({
@@ -77,6 +51,7 @@ const formSchema: z.ZodType<FormSchema> = z
       .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
     confirm_password: z.string().min(PASSWORD_MIN_LENGTH),
   })
+  // 유효성을 통과한 경우 DB에 동일한 username, email이 존재하는지 확인
   .superRefine(async ({ username }, context) => {
     const user = await db.user.findUnique({
       where: {
