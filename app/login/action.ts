@@ -75,6 +75,7 @@ export async function login(state: any, formData: FormData) {
     if (ok) {
       const session = await getSession();
       session.id = user!.id;
+      await session.save();
       // 사용자 redirect
       redirect("/profile");
     } else {
