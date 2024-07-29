@@ -19,7 +19,7 @@ const publicOnlyUrls: Routes = {
 
 // 미들웨어 파일명은 반드시 middleware 이어야하거나 export default 이어야함
 export async function middleware(req: NextRequest) {
-  const session = await getSession();
+  const session = await getSession(); // 로그인 여부를 확인하기위한 세션 받아오기
   const exists = publicOnlyUrls[req.nextUrl.pathname]; // 접속 시도한 페이지가 인증되지 않은 유저가 접근 가능한 페이지인지 확인
 
   // 로그아웃 상태 처리
@@ -47,5 +47,5 @@ export async function middleware(req: NextRequest) {
 
 // 설정파일명은 반드시 config 이어야함
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
