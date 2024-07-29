@@ -57,7 +57,10 @@ export default function SocialLogin() {
           </svg>
           <p>Google로 시작하기</p>
         </button>
-        <button className="primary-btn flex h-10 items-center justify-center bg-black hover:bg-gray-900">
+        <Link
+          className="primary-btn flex h-10 items-center justify-center bg-black hover:bg-gray-900"
+          href="/github/start"
+        >
           <div className="flex h-10 w-10 items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +78,7 @@ export default function SocialLogin() {
             </svg>
           </div>
           Github로 시작하기
-        </button>
+        </Link>
         <Link
           className="primary-btn flex h-10 items-center justify-center gap-2"
           href="/sms"

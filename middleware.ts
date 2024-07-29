@@ -15,6 +15,8 @@ const publicOnlyUrls: Routes = {
   "/login": true,
   "/sms": true,
   "/signup": true,
+  "/github/start": true,
+  "/github/complete": true,
 };
 
 // 미들웨어 파일명은 반드시 middleware 이어야하거나 export default 이어야함
