@@ -6,9 +6,11 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
 
-  // 임시코드가 없는 경우 NotFound 페이지로 리다이렉트
+  // 임시코드가 없는 경우 에러 처리
   if (!code) {
-    return notFound();
+    return new Response(null, {
+      status: 400,
+    });
   }
 
   // AccessToken을 받기위한 매개변수 정리
