@@ -12,8 +12,7 @@ import {
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import getSession from "@/lib/session";
-import { redirect } from "next/navigation";
+import { userLogin } from "@/utils/common";
 
 // 이메일로 유저 찾기
 const checkEmailExists = async (email: string) => {
@@ -73,11 +72,7 @@ export async function login(state: any, formData: FormData) {
 
     // 사용자 로그인
     if (ok) {
-      const session = await getSession();
-      session.id = user!.id;
-      await session.save();
-      // 사용자 redirect
-      redirect("/profile");
+      await userLogin(user!);
     } else {
       // 비밀번호가 틀렸을 경우 에러 메시지 노출, Zod의 형태로 에러를 리턴하여 앞단에서 사용하도록 유도
       return {

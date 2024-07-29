@@ -12,8 +12,7 @@ import {
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { redirect } from "next/navigation";
-import getSession from "@/lib/session";
+import { userLogin } from "@/utils/common";
 
 interface FormSchema {
   username: string;
@@ -127,14 +126,6 @@ export async function createAccount(prev: any, formData: FormData) {
       },
     });
 
-    console.log(user);
-
-    // 사용자 로그인
-    const session = await getSession(); // 세션 토큰 생성
-    session.id = user.id;
-    await session.save(); // 세션 토큰 저장 및 유저 정보 암호화
-
-    // 사용자 redirect
-    redirect("/profile");
+    await userLogin(user);
   }
 }

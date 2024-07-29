@@ -1,6 +1,5 @@
 import db from "@/lib/db";
-import getSession from "@/lib/session";
-import { notFound, redirect } from "next/navigation";
+import { userLogin } from "@/utils/common";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -38,9 +37,10 @@ export async function GET(req: NextRequest) {
 
   const userProfileResponse = await fetch("https://api.github.com/user", {
     headers: {
+      // 요청 헤더에 발급받은 Access Token 추가
       Authorization: `Bearer ${access_token}`,
     },
-    cache: "no-cache",
+    cache: "no-cache", // Next.js에선 기본적으로 요청을 캐시에 저장하는데 이를 막아두는 코드
   });
 
   const { id, avatar_url, login } = await userProfileResponse.json();
@@ -57,13 +57,11 @@ export async function GET(req: NextRequest) {
 
   if (user) {
     // github_id를 가진 사람이 존재할 경우 로그인
-    const session = await getSession();
-    session.id = user.id;
-    await session.save();
-    return redirect("/profile");
+    await userLogin(user);
   }
 
   const newUser = await db.user.create({
+    // db에 없는 경우 새로운 유저 추가
     data: {
       username: login,
       github_id: `${id}`,
@@ -75,8 +73,5 @@ export async function GET(req: NextRequest) {
   });
 
   // github_id를 가진 사람이 존재할 경우 로그인
-  const session = await getSession();
-  session.id = newUser.id;
-  await session.save();
-  return redirect("/profile");
+  await userLogin(newUser);
 }
