@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import GoogleAuth from "@/lib/google-auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +19,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} mx-auto max-w-screen-sm bg-neutral-900 text-white`}
       >
-        <GoogleAuth>{children}</GoogleAuth>
+        {children}
       </body>
     </html>
   );

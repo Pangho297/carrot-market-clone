@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
  */
 interface SessionContent {
   id?: number;
+  state?: string; // Google 로그인 시 CSRF 공격 방어를 위한 state 세션 저장
 }
 
 /** 세션토큰 생성 로직
