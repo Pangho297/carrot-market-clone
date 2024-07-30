@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import { NextRequest } from "next/server";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 
@@ -8,7 +7,7 @@ export async function GET() {
   const state = crypto.randomBytes(32).toString("hex");
   const session = await getSession();
   session.state = state;
-  session.save();
+  await session.save();
 
   const baseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
   const params = {

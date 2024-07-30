@@ -1,7 +1,16 @@
+import getSession from "@/lib/session";
+import { notFound } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export async function getAccessToken(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
+  const state = req.nextUrl.searchParams.get("state");
+  const session = await getSession();
+
+  // CSRF 공격 방어
+  if (!state || session.state !== state) {
+    return notFound();
+  }
 
   // 임시코드가 없는 경우 에러 처리
   if (!code) {
@@ -32,15 +41,18 @@ export async function getAccessToken(req: NextRequest) {
 
   if (res.error) {
     // 임시코드 에러처리
-    return new Response(null, {
-      status: 400,
-    });
+    return notFound();
   }
 
   return res;
 }
 
 export async function getUserProfile(access_token: string) {
+  if (!access_token) {
+    // 임시코드 에러처리
+    return notFound();
+  }
+
   const userProfileResponse = await fetch(
     "https://www.googleapis.com/oauth2/v1/userinfo",
     {
