@@ -47,6 +47,7 @@ const tokenSchema = z.coerce
   .max(999999)
   .refine(tokenExists, "인증번호가 유효하지 않습니다");
 
+  /** 토큰을 사용자에게 보낸 시점의 전화번호와 입력 시점의 전화번호 확인 */
 const phoneCheck = z
   .string()
   .trim()
@@ -95,18 +96,19 @@ export async function smsLogin(prev: ActionState, formData: FormData) {
       // 실패
       return { token: false, error: result.error.flatten() };
     } else {
+      const token = await getToken();
+      const phone = result.data;
+
       // 이전 token 삭제하기
       await db.sMSToken.deleteMany({
         where: {
           user: {
-            phone: result.data,
+            phone,
           },
         },
       });
 
       // token 생성
-      const phone = result.data;
-      const token = await getToken();
       await db.sMSToken.create({
         data: {
           phone, // token 검증 시 전화번호를 추가해 보안 강화
@@ -138,12 +140,12 @@ export async function smsLogin(prev: ActionState, formData: FormData) {
       });
 
       // 통과
-      return { token: true, phone: result.data };
+      return { token: true, phone };
     }
   } else {
     // 사용자가 토큰도 입력한 경우
     const result = await tokenSchema.safeParseAsync(token);
-    const check = await phoneCheck.safeParseAsync(prev.phone);
+    const check = await phoneCheck.safeParseAsync(prev.phone); // 휴대전화번호 입력 시점의 값 검증
 
     if (!check.success) {
       // 휴대전화번호 이상있는 경우
