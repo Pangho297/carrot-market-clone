@@ -13,6 +13,7 @@ import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { userLogin } from "@/utils/common";
+import { redirect } from "next/navigation";
 
 interface FormSchema {
   username: string;
@@ -127,5 +128,6 @@ export async function createAccount(prev: any, formData: FormData) {
     });
 
     await userLogin(user);
+    return redirect("/profile");
   }
 }

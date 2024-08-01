@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getAccessToken, getUserProfile } from "./service";
 import db from "@/lib/db";
 import { userLogin } from "@/utils/common";
+import { redirect } from "next/navigation";
 
 export async function GET(req: NextRequest) {
   const { access_token } = await getAccessToken(req);
@@ -18,6 +19,7 @@ export async function GET(req: NextRequest) {
 
   if (user) {
     await userLogin(user);
+    return redirect("/profile");
   }
 
   const newUser = await db.user.create({
@@ -32,4 +34,5 @@ export async function GET(req: NextRequest) {
   });
 
   await userLogin(newUser);
+  return redirect("/profile");
 }

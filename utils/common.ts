@@ -10,9 +10,8 @@ interface userId {
  * @param user userId
  * @param url string
  */
-export async function userLogin(user: userId, url = "/profile") {
+export async function userLogin(user: userId) {
   const session = await getSession(); // 세션 토큰 생성
   session.id = user.id;
   await session.save(); // 세션 토큰 저장 및 유저 정보 암호화
-  return redirect(url); // 사용자 redirect
 }

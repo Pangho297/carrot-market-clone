@@ -2,6 +2,7 @@ import db from "@/lib/db";
 import { userLogin } from "@/utils/common";
 import { NextRequest } from "next/server";
 import { getAccessToken, getUserEmail, getUserProfile } from "./service";
+import { redirect } from "next/navigation";
 
 export async function GET(req: NextRequest) {
   const { access_token } = await getAccessToken(req);
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest) {
   if (user) {
     // github_id를 가진 사람이 존재할 경우 로그인
     await userLogin(user);
+    return redirect("/profile");
   }
 
   const newUser = await db.user.create({
@@ -37,4 +39,5 @@ export async function GET(req: NextRequest) {
 
   // github_id를 가진 사람이 존재할 경우 로그인
   await userLogin(newUser);
+  return redirect("/profile");
 }
