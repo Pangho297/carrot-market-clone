@@ -8,6 +8,7 @@ import { smsLogin } from "./action";
 const initialState = {
   token: false,
   error: undefined,
+  phone: "",
 };
 
 export default function SMSLogin() {
