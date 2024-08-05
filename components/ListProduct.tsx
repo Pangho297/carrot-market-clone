@@ -1,3 +1,5 @@
+import formatToTimeAgo from "@/utils/formatToTimeAgo";
+import formatToWon from "@/utils/formatToWon";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,10 +26,10 @@ export default function ListProduct({
       <div className="flex flex-col gap-1">
         <span className="text-lg text-white">{title}</span>
         <span className="text-sm text-neutral-500">
-          {created_at.toString()}
+          {formatToTimeAgo(created_at.toString())}
         </span>
         <span className="text-lg font-semibold text-white">
-          {price.toLocaleString("ko-KR")} 원
+          {formatToWon(price)} 원
         </span>
       </div>
     </Link>
