@@ -1,7 +1,7 @@
 "use client";
 
 import { InitialProducts } from "@/app/(tabs)/products/page";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Product from "./Product";
 import { getMoreProducts } from "@/app/(tabs)/products/actions";
 
@@ -15,19 +15,42 @@ export default function ProductList({ initialProducts }: ProductListProps) {
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
 
-  const onClick = async () => {
-    setIsLoading(true);
-    const newProducts = await getMoreProducts(page);
+  const trigger = useRef<HTMLSpanElement>(null);
 
-    if (newProducts.length !== 0) {
-      setPage((prev) => prev + 1);
-      setProducts((prev) => [...prev, ...newProducts]);
-    } else {
-      setIsLastPage(true);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      async (entries, observer) => {
+        const element = entries[0];
+
+        if (element.isIntersecting && trigger.current) {
+          observer.unobserve(trigger.current); // 주시 대상의 callback이 실행되면 주시 해제 (Effect Dependency에 의해 다시 잡힘)
+          setIsLoading(true);
+          const newProducts = await getMoreProducts(page);
+
+          if (newProducts.length !== 0) {
+            setPage((prev) => prev + 1);
+            setProducts((prev) => [...prev, ...newProducts]);
+          } else {
+            setIsLastPage(true);
+          }
+
+          setIsLoading(false);
+        }
+      },
+      {
+        threshold: 0.5,
+        rootMargin: "0px 0px -78px 0px",
+      }
+    );
+
+    if (trigger.current) {
+      observer.observe(trigger.current);
     }
 
-    setIsLoading(false);
-  };
+    return () => {
+      observer.disconnect();
+    };
+  }, [page]);
 
   return (
     <div className="flex flex-col gap-5 p-5">
@@ -35,15 +58,14 @@ export default function ProductList({ initialProducts }: ProductListProps) {
         <Product key={product.id} {...product} />
       ))}
       {!isLastPage ? (
-        <button
-          className="mx-auto w-fit rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold hover:opacity-90 active:scale-95"
-          disabled={isLoading}
-          onClick={onClick}
+        <span
+          ref={trigger}
+          className="mx-auto w-fit rounded-md bg-orange-500 px-3 py-2 text-center text-sm font-semibold hover:opacity-90 active:scale-95"
         >
           {isLoading ? "불러오는 중..." : "더 보기"}
-        </button>
+        </span>
       ) : (
-        <span className="w-full text-center">상품을 더 찾을 수 없습니다</span>
+        <div className="w-full text-center">상품을 찾을 수 없습니다</div>
       )}
     </div>
   );

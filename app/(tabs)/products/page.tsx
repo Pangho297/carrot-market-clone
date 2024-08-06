@@ -1,5 +1,6 @@
 import ListProduct from "@/components/Product";
 import ProductList from "@/components/ProductList";
+import { PAGE_LIMIT } from "@/lib/constants";
 import db from "@/lib/db";
 import { Prisma } from "@prisma/client";
 
@@ -12,7 +13,7 @@ async function getInitialProducts() {
       photo: true,
       id: true,
     },
-    take: 5,
+    take: PAGE_LIMIT,
     orderBy: {
       created_at: "desc",
     },

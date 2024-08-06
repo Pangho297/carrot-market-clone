@@ -1,5 +1,6 @@
 "use server";
 
+import { PAGE_LIMIT } from "@/lib/constants";
 import db from "@/lib/db";
 
 export async function getMoreProducts(page: number) {
@@ -11,8 +12,8 @@ export async function getMoreProducts(page: number) {
       photo: true,
       id: true,
     },
-    skip: 5 * page,
-    take: 5,
+    skip: PAGE_LIMIT * page,
+    take: PAGE_LIMIT,
     orderBy: {
       created_at: "desc",
     },

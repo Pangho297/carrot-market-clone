@@ -13,3 +13,4 @@ export const PASSWORD_MIN_LENGTH_ERROR =
   "비밀번호는 4자리 이상으로 만들어주세요";
 export const PASSWORD_REGEX_ERROR =
   "비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다";
+  export const PAGE_LIMIT = 10;
