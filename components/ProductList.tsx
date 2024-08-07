@@ -23,7 +23,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
         const element = entries[0];
 
         if (element.isIntersecting && trigger.current) {
-          observer.unobserve(trigger.current); // 주시 대상의 callback이 실행되면 주시 해제 (Effect Dependency에 의해 다시 잡힘)
+          observer.unobserve(trigger.current); // 주시 대상의 callback이 실행되면 주시 해제, 여러번 트리거 되는것을 방지하기 위함, (Effect Dependency에 의해 다시 잡힘)
           setIsLoading(true);
           const newProducts = await getMoreProducts(page);
 
