@@ -21,7 +21,7 @@ export default function AddProduct() {
     }
 
     const file = files[0];
-    
+
     // 사용자가 이미지를 업로드했는지 확인,
     if (!file.type.includes("image/")) {
       alert("이미지 파일만 업로드해 주세요");
@@ -51,7 +51,13 @@ export default function AddProduct() {
           {preview === "" ? (
             <>
               <PhotoIcon className="w-20" />
-              <div className="text-neutral-400">사진을 추가해 주세요.</div>
+              {state?.fieldErrors.photo ? (
+                <div className="text-red-500">
+                  잘못된 사진입니다 다시 추가해 주세요
+                </div>
+              ) : (
+                <div className="text-neutral-400">사진을 추가해 주세요.</div>
+              )}
             </>
           ) : null}
         </label>
@@ -68,18 +74,21 @@ export default function AddProduct() {
           name="title"
           required
           placeholder="제목을 입력해 주세요"
+          errorMessage={state?.fieldErrors.title}
         />
         <Input
           type="number"
           name="price"
           required
           placeholder="가격을 입력해 주세요"
+          errorMessage={state?.fieldErrors.price}
         />
         <Input
           type="text"
           name="description"
           required
           placeholder="상품에 대한 설명을 입력해 주세요"
+          errorMessage={state?.fieldErrors.description}
         />
         <Button>올리기</Button>
       </form>
