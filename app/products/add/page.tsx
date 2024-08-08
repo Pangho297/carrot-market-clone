@@ -10,7 +10,37 @@ import { getUploadUrl, uploadProduct } from "./action";
 export default function AddProduct() {
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
-  const [state, dispatch] = useFormState(uploadProduct, null);
+  const [imageId, setImageId] = useState("");
+
+  const ActionInterceptor = async (_: any, formData: FormData) => {
+    // Cloudflare에 이미지 업로드
+
+    const file = formData.get("photo");
+    // 파일 업로드 안된경우 방지
+    if (!file) {
+      return;
+    }
+
+    const cloudflareForm = new FormData();
+    cloudflareForm.append("file", file);
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      body: cloudflareForm
+    })
+
+    if (res.status !== 200) {
+      return alert("이미지 업로드에 실패했습니다 다시 시도해주세요")
+    }
+    // formData의 "photo"값 변경
+
+    const photoUrl = `https://imagedelivery.net/RKE42dt_Ful-0DfbKHMq4A/${imageId}`
+    formData.set("photo", photoUrl);
+    
+    // uploadProduct 호출
+
+    return uploadProduct(_, formData)
+  }
+  const [state, dispatch] = useFormState(ActionInterceptor, null);
 
   const onImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const {
@@ -43,6 +73,7 @@ export default function AddProduct() {
     if (success) {
       const {id, uploadURL} = result;
       setUploadUrl(uploadURL);
+      setImageId(id);
     }
   };
 

@@ -21,7 +21,12 @@ export default function Product({
   return (
     <Link href={`/products/${id}`} className="flex gap-5 hover:no-underline">
       <div className="relative size-28 overflow-hidden rounded-md">
-        <Image fill src={photo} alt={title} className="object-cover" />
+        <Image
+          fill
+          src={`${photo}/avatar`}
+          alt={title}
+          className="object-cover"
+        />
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-lg text-white">{title}</span>
