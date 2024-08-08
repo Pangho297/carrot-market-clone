@@ -31,12 +31,13 @@ export async function uploadProduct(prev: any, formData: FormData) {
     description: formData.get("description"),
   };
 
-  if (data.photo instanceof File) {
-    const photoData = await data.photo.arrayBuffer();
-    // @ts-ignore, 임시 파일 업로드를 위해 파일을 public에 저장
-    await fs.appendFile(`./public/${data.photo.name}`, Buffer.from(photoData));
-    data.photo = `/${data.photo.name}`;
-  }
+  /** 로컬에 이미지를 업로드하는 경우 */
+  // if (data.photo instanceof File) {
+  //   const photoData = await data.photo.arrayBuffer();
+  //   // @ts-ignore, 임시 파일 업로드를 위해 파일을 public에 저장
+  //   await fs.appendFile(`./public/${data.photo.name}`, Buffer.from(photoData));
+  //   data.photo = `/${data.photo.name}`;
+  // }
 
   const result = productSchema.safeParse(data);
   if (!result.success) {
@@ -64,4 +65,19 @@ export async function uploadProduct(prev: any, formData: FormData) {
       redirect(`/products/${product.id}`);
     }
   }
+}
+
+export async function getUploadUrl() {
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v2/direct_upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+      },
+    }
+  );
+
+  const data = await res.json();
+  return data;
 }
