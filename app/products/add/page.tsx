@@ -4,18 +4,27 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { ChangeEvent, useState } from "react";
-import { useFormState } from "react-dom";
 import { getUploadUrl, uploadProduct } from "./action";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProductFormType, productSchema } from "./schema";
 
 export default function AddProduct() {
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
-  const [imageId, setImageId] = useState("");
+  const [file, setFile] = useState<File | null>(null);
 
-  const ActionInterceptor = async (_: any, formData: FormData) => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ProductFormType>({
+    resolver: zodResolver(productSchema),
+  });
+
+  const onSubmit = handleSubmit(async (data: ProductFormType) => {
     // Cloudflare에 이미지 업로드
-
-    const file = formData.get("photo");
     // 파일 업로드 안된경우 방지
     if (!file) {
       return;
@@ -25,22 +34,27 @@ export default function AddProduct() {
     cloudflareForm.append("file", file);
     const res = await fetch(uploadUrl, {
       method: "POST",
-      body: cloudflareForm
-    })
+      body: cloudflareForm,
+    });
 
     if (res.status !== 200) {
-      return alert("이미지 업로드에 실패했습니다 다시 시도해주세요")
+      return alert("이미지 업로드에 실패했습니다 다시 시도해주세요");
     }
-    // formData의 "photo"값 변경
 
-    const photoUrl = `https://imagedelivery.net/RKE42dt_Ful-0DfbKHMq4A/${imageId}`
-    formData.set("photo", photoUrl);
-    
+    // formData 생성
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("price", `${data.price}`);
+    formData.append("description", data.description);
+    formData.append("photo", data.photo);
+
     // uploadProduct 호출
+    return uploadProduct(formData);
+  });
 
-    return uploadProduct(_, formData)
-  }
-  const [state, dispatch] = useFormState(ActionInterceptor, null);
+  const onValid = async () => {
+    await onSubmit();
+  };
 
   const onImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const {
@@ -69,17 +83,21 @@ export default function AddProduct() {
 
     const url = URL.createObjectURL(file);
     setPreview(url);
-    const {success, result} = await getUploadUrl();
+    setFile(file);
+    const { success, result } = await getUploadUrl();
     if (success) {
-      const {id, uploadURL} = result;
+      const { id, uploadURL } = result;
       setUploadUrl(uploadURL);
-      setImageId(id);
+      setValue(
+        "photo",
+        `https://imagedelivery.net/RKE42dt_Ful-0DfbKHMq4A/${id}`
+      );
     }
   };
 
   return (
     <div>
-      <form className="flex flex-col gap-5 p-5" action={dispatch}>
+      <form className="flex flex-col gap-5 p-5" action={onValid}>
         <label
           htmlFor="photo"
           className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-neutral-300 bg-cover bg-center text-neutral-300"
@@ -88,7 +106,7 @@ export default function AddProduct() {
           {preview === "" ? (
             <>
               <PhotoIcon className="w-20" />
-              {state?.fieldErrors.photo ? (
+              {errors.photo?.message ? (
                 <div className="text-red-500">
                   잘못된 사진입니다 다시 추가해 주세요
                 </div>
@@ -101,31 +119,29 @@ export default function AddProduct() {
         <input
           type="file"
           id="photo"
-          name="photo"
           className="hidden"
           accept="image/*"
           onChange={onImageChange}
         />
         <Input
-          type="text"
-          name="title"
+          {...register("title")}
           required
           placeholder="제목을 입력해 주세요"
-          errorMessage={state?.fieldErrors.title}
+          errorMessage={[errors.title?.message ?? ""]}
         />
         <Input
+          {...register("price")}
           type="number"
-          name="price"
           required
           placeholder="가격을 입력해 주세요"
-          errorMessage={state?.fieldErrors.price}
+          errorMessage={[errors.price?.message ?? ""]}
         />
         <Input
+          {...register("description")}
           type="text"
-          name="description"
           required
           placeholder="상품에 대한 설명을 입력해 주세요"
-          errorMessage={state?.fieldErrors.description}
+          errorMessage={[errors.description?.message ?? ""]}
         />
         <Button>올리기</Button>
       </form>
