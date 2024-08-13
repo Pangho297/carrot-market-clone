@@ -66,7 +66,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     });
 
     if (Boolean(deletedProduct)) {
-      return redirect("/products");
+      return redirect("/home");
     }
   };
 

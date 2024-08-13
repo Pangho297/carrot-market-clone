@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
     // 로그인한 경우
     if (exists) {
       // 로그인 유저가 계정생성등의 페이지에 접근 시
-      return NextResponse.redirect(new URL("/products", req.url));
+      return NextResponse.redirect(new URL("/home", req.url));
     }
   }
 
