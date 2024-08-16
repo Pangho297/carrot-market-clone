@@ -14,12 +14,12 @@ interface ProductDetailProps {
   params: ParamsType;
 }
 
-async function getIsOwner(userId: number) {
+export async function getIsOwner(userId: number) {
   const session = await getSession();
   return session.id === userId;
 }
 
-async function getProduct(id: number) {
+export async function getProduct(id: number) {
   const product = await db.product.findUnique({
     where: {
       id,
@@ -71,7 +71,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
   };
 
   return (
-    <div>
+    <div className="relative h-full">
       <div className="relative aspect-square">
         <Image
           fill
@@ -101,7 +101,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
         <h1 className="text-2xl font-semibold">{product.title}</h1>
         <p>{product.description}</p>
       </div>
-      <div className="fixed bottom-0 left-0 flex w-full items-center justify-between bg-neutral-800 p-5">
+      <div className="absolute bottom-0 left-0 flex w-full max-w-screen-md items-center justify-between bg-neutral-800 p-5">
         <span className="text-xl font-semibold">
           {formatToWon(product.price)} 원
         </span>
