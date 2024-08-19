@@ -38,6 +38,13 @@ export async function getProduct(id: number) {
   return product;
 }
 
+export async function generateMetadata({ params }: ProductDetailProps) {
+  const product = await getProduct(parseInt(params.id))
+  return {
+    title: product?.title,
+  };
+}
+
 export default async function ProductDetail({ params }: ProductDetailProps) {
   const id = Number(params.id);
 
