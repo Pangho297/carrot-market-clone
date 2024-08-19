@@ -5,6 +5,7 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 
 interface ParamsType {
   id: string;
@@ -17,6 +18,25 @@ interface ProductDetailProps {
 export async function getIsOwner(userId: number) {
   const session = await getSession();
   return session.id === userId;
+}
+
+/** fetch 요청의 cache 저장 
+ * 
+ * fetch 요청이 cache로 저장되는 조건은 다음과 같다
+ * 
+ * 1. GET 요청일때
+ * 
+ * 2. headers, cookies가 없는 경우
+ * 
+ * 3. server actions이 아닌 경우
+*/
+async function TestFetch() {
+  fetch("https://api.com", {
+    next: {
+      revalidate: 60,
+      tags: ["hello"],
+    },
+  });
 }
 
 export async function getProduct(id: number) {
@@ -38,8 +58,29 @@ export async function getProduct(id: number) {
   return product;
 }
 
+const getCachedProduct = nextCache(getProduct, ["product-detail"], {
+  tags: ["product-detail"],
+});
+
+export async function getProductTitle(id: number) {
+  const product = await db.product.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      title: true,
+    },
+  });
+
+  return product;
+}
+
+const getCachedProductTItle = nextCache(getProductTitle, ["product-title"], {
+  tags: ["product-title"],
+});
+
 export async function generateMetadata({ params }: ProductDetailProps) {
-  const product = await getProduct(parseInt(params.id))
+  const product = await getCachedProductTItle(parseInt(params.id));
   return {
     title: product?.title,
   };
@@ -52,7 +93,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     return notFound();
   }
 
-  const product = await getProduct(id);
+  const product = await getCachedProduct(id);
 
   if (!product) {
     return notFound();
@@ -75,6 +116,11 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     if (Boolean(deletedProduct)) {
       return redirect("/home");
     }
+  };
+
+  const revalidate = async () => {
+    "use server";
+    revalidateTag("product-title");
   };
 
   return (
@@ -113,9 +159,9 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
           {formatToWon(product.price)} 원
         </span>
         {isOwner ? (
-          <form action={deleteProduct}>
+          <form action={revalidate}>
             <button className="rounded-md bg-red-500 px-5 py-2.5 font-semibold text-white">
-              삭제하기
+              title 캐시 새로고침 테스트
             </button>
           </form>
         ) : null}
