@@ -15,21 +15,21 @@ interface ProductDetailProps {
   params: ParamsType;
 }
 
-export async function getIsOwner(userId: number) {
+async function getIsOwner(userId: number) {
   const session = await getSession();
   return session.id === userId;
 }
 
-/** fetch 요청의 cache 저장 
- * 
+/** fetch 요청의 cache 저장
+ *
  * fetch 요청이 cache로 저장되는 조건은 다음과 같다
- * 
+ *
  * 1. GET 요청일때
- * 
+ *
  * 2. headers, cookies가 없는 경우
- * 
+ *
  * 3. server actions이 아닌 경우
-*/
+ */
 async function TestFetch() {
   fetch("https://api.com", {
     next: {
@@ -39,7 +39,7 @@ async function TestFetch() {
   });
 }
 
-export async function getProduct(id: number) {
+async function getProduct(id: number) {
   const product = await db.product.findUnique({
     where: {
       id,
@@ -62,7 +62,7 @@ const getCachedProduct = nextCache(getProduct, ["product-detail"], {
   tags: ["product-detail"],
 });
 
-export async function getProductTitle(id: number) {
+async function getProductTitle(id: number) {
   const product = await db.product.findUnique({
     where: {
       id,
@@ -118,6 +118,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     }
   };
 
+  /** revalidateTag 테스트 함수 */
   const revalidate = async () => {
     "use server";
     revalidateTag("product-title");
@@ -159,9 +160,9 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
           {formatToWon(product.price)} 원
         </span>
         {isOwner ? (
-          <form action={revalidate}>
+          <form action={deleteProduct}>
             <button className="rounded-md bg-red-500 px-5 py-2.5 font-semibold text-white">
-              title 캐시 새로고침 테스트
+              삭제하기
             </button>
           </form>
         ) : null}

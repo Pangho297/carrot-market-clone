@@ -1,6 +1,6 @@
-import { getIsOwner, getProduct } from "@/app/products/[id]/page";
 import CloseModalBtn from "@/components/CloseModalBtn";
 import db from "@/lib/db";
+import getSession from "@/lib/session";
 import formatToWon from "@/utils/formatToWon";
 import { PhotoIcon, UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
@@ -8,6 +8,30 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 new Promise((resolve) => setTimeout(resolve, 10000));
+
+async function getIsOwner(userId: number) {
+  const session = await getSession();
+  return session.id === userId;
+}
+
+async function getProduct(id: number) {
+  const product = await db.product.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      // user에서 가져올 데이터 선택, 안하면 유저와 관련된 모든 데이터를 가져오기 때문
+      user: {
+        select: {
+          username: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  return product;
+}
 
 export default async function Modal({ params }: { params: { id: string } }) {
   const id = parseInt(params.id);
@@ -21,7 +45,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
     return notFound();
   }
 
-  const isOwner = await getIsOwner(product.userId);
+  const isOwner = await getIsOwner(id);
 
   const deleteProduct = async () => {
     "use server";
