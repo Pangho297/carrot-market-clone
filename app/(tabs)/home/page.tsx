@@ -8,10 +8,11 @@ import { unstable_cache as nextCache, revalidatePath } from "next/cache";
 import Link from "next/link";
 
 const getCachedProducts = nextCache(getInitialProducts, ["home-products"], {
-  revalidate: 60,
+  tags: ["product-list"],
 });
 
 async function getInitialProducts() {
+  console.log("hit!");
   const products = await db.product.findMany({
     select: {
       title: true,
@@ -33,22 +34,13 @@ export type InitialProducts = Prisma.PromiseReturnType<
   typeof getInitialProducts
 >;
 
-export const revalidate = 60;
-
 export default async function Products() {
   const initialProducts = await getCachedProducts();
-  const revalidate = async () => {
-    "use server";
-    revalidatePath("/home");
-  };
   return (
     <div>
       <ProductList initialProducts={initialProducts} />
-      <form action={revalidate}>
-        <button>캐시 새로고침 테스트</button>
-      </form>
       <Link
-        href="/add-product"
+        href="/upload-product"
         className="fixed bottom-24 right-8 flex size-16 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-400"
       >
         <PlusIcon className="size-10" />

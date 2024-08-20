@@ -7,6 +7,9 @@ const nextConfig = {
       },
       {
         hostname: "imagedelivery.net"
+      },
+      {
+        hostname: "lh3.googleusercontent.com"
       }
     ]
   }

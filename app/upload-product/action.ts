@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 import { productSchema } from "./schema";
+import { revalidateTag } from "next/cache";
 
 export async function uploadProduct(formData: FormData) {
   const data = {
@@ -43,6 +44,49 @@ export async function uploadProduct(formData: FormData) {
         },
       });
 
+      revalidateTag("product-list");
+      revalidateTag("product-detail");
+      redirect(`/products/${product.id}`);
+    }
+  }
+}
+
+export async function updateProduct(formData: FormData, id: number) {
+  const data = {
+    photo: formData.get("photo"),
+    title: formData.get("title"),
+    price: formData.get("price"),
+    description: formData.get("description"),
+  };
+
+  const result = productSchema.safeParse(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    const session = await getSession();
+    if (session.id) {
+      const product = await db.product.update({
+        where: {
+          id,
+        },
+        data: {
+          title: result.data.title,
+          description: result.data.description,
+          price: result.data.price,
+          photo: result.data.photo,
+          user: {
+            connect: {
+              id: session.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      revalidateTag("product-list");
+      revalidateTag("product-detail");
       redirect(`/products/${product.id}`);
     }
   }
@@ -61,4 +105,14 @@ export async function getUploadUrl() {
 
   const data = await res.json();
   return data;
+}
+
+export async function getProduct(id: number) {
+  const product = await db.product.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return product;
 }

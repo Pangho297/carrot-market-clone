@@ -3,16 +3,23 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { ChangeEvent, useState } from "react";
-import { getUploadUrl, uploadProduct } from "./action";
+import { ChangeEvent, useEffect, useState } from "react";
+import {
+  getProduct,
+  getUploadUrl,
+  updateProduct,
+  uploadProduct,
+} from "./action";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProductFormType, productSchema } from "./schema";
+import { useSearchParams } from "next/navigation";
 
-export default function AddProduct() {
+export default function UploadProduct() {
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [isModify, setIsModify] = useState(false);
 
   const {
     register,
@@ -22,6 +29,32 @@ export default function AddProduct() {
   } = useForm<ProductFormType>({
     resolver: zodResolver(productSchema),
   });
+
+  const params = useSearchParams();
+  const id = params.get("id");
+
+  useEffect(() => {
+    if (!id) {
+      setIsModify(false);
+      return;
+    }
+
+    (async () => {
+      const product = await getProduct(parseInt(id));
+
+      if (!product) {
+        setIsModify(false);
+        return;
+      }
+
+      setIsModify(true);
+      setValue("title", product.title);
+      setValue("price", product.price);
+      setValue("description", product.description);
+      setPreview(`${product.photo}/public`);
+      setValue("photo", product.photo);
+    })();
+  }, [id, setValue]);
 
   const onSubmit = handleSubmit(async (data: ProductFormType) => {
     // Cloudflare에 이미지 업로드
@@ -47,6 +80,10 @@ export default function AddProduct() {
     formData.append("price", `${data.price}`);
     formData.append("description", data.description);
     formData.append("photo", data.photo);
+
+    if (isModify && id) {
+      return updateProduct(formData, parseInt(id));
+    }
 
     // uploadProduct 호출
     return uploadProduct(formData);

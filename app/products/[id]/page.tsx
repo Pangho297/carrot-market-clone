@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-// import getSession from "@/lib/session";
+import getSession from "@/lib/session";
 import formatToWon from "@/utils/formatToWon";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
@@ -16,9 +16,8 @@ interface ProductDetailProps {
 }
 
 async function getIsOwner(userId: number) {
-  // const session = await getSession();
-  // return session.id === userId;
-  return false;
+  const session = await getSession();
+  return session.id === userId;
 }
 
 /** fetch 요청의 cache 저장
@@ -161,11 +160,19 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
           {formatToWon(product.price)} 원
         </span>
         {isOwner ? (
-          <form action={deleteProduct}>
-            <button className="rounded-md bg-red-500 px-5 py-2.5 font-semibold text-white">
-              삭제하기
-            </button>
-          </form>
+          <div className="flex gap-4">
+            <form action={deleteProduct}>
+              <button className="rounded-md bg-red-500 px-5 py-2.5 font-semibold text-white">
+                삭제하기
+              </button>
+            </form>
+            <Link
+              href={`/upload-product?id=${product.id}`}
+              className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white"
+            >
+              수정하기
+            </Link>
+          </div>
         ) : null}
         <Link
           href=""
@@ -177,6 +184,8 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     </div>
   );
 }
+
+export const dynamicParams = true; // true | false
 
 export async function generateStaticParams() {
   const products = await db.product.findMany({

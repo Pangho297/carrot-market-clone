@@ -45,7 +45,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
     return notFound();
   }
 
-  const isOwner = await getIsOwner(id);
+  const isOwner = await getIsOwner(product.userId);
 
   const deleteProduct = async () => {
     "use server";
@@ -108,11 +108,19 @@ export default async function Modal({ params }: { params: { id: string } }) {
               {formatToWon(product.price)} 원
             </span>
             {isOwner ? (
-              <form action={deleteProduct}>
-                <button className="rounded-md bg-red-500 px-5 py-2.5 font-semibold text-white">
-                  삭제하기
-                </button>
-              </form>
+              <div className="flex gap-4">
+                <form action={deleteProduct}>
+                  <button className="rounded-md bg-red-500 px-5 py-2.5 font-semibold text-white">
+                    삭제하기
+                  </button>
+                </form>
+                <Link
+                  href={`/upload-product?id=${product.id}`}
+                  className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white"
+                >
+                  수정하기
+                </Link>
+              </div>
             ) : null}
             <Link
               href=""
