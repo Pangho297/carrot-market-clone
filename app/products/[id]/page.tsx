@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+// import getSession from "@/lib/session";
 import formatToWon from "@/utils/formatToWon";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
@@ -16,8 +16,9 @@ interface ProductDetailProps {
 }
 
 async function getIsOwner(userId: number) {
-  const session = await getSession();
-  return session.id === userId;
+  // const session = await getSession();
+  // return session.id === userId;
+  return false;
 }
 
 /** fetch 요청의 cache 저장
@@ -175,4 +176,13 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
       </div>
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const products = await db.product.findMany({
+    select: {
+      id: true,
+    },
+  });
+  return products.map((product) => ({ id: `${product.id}` }));
 }

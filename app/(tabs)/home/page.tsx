@@ -39,9 +39,8 @@ export default async function Products() {
   const initialProducts = await getCachedProducts();
   const revalidate = async () => {
     "use server";
-    revalidatePath("/home")
-
-  }
+    revalidatePath("/home");
+  };
   return (
     <div>
       <ProductList initialProducts={initialProducts} />
@@ -49,7 +48,7 @@ export default async function Products() {
         <button>캐시 새로고침 테스트</button>
       </form>
       <Link
-        href="/products/add"
+        href="/add-product"
         className="fixed bottom-24 right-8 flex size-16 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-400"
       >
         <PlusIcon className="size-10" />
