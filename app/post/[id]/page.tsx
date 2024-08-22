@@ -1,8 +1,10 @@
+import CommentList from "@/components/CommentList";
 import LikeButton from "@/components/LikeButton";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import { EyeIcon } from "@heroicons/react/24/solid";
+import { Prisma } from "@prisma/client";
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -40,10 +42,14 @@ async function getPost(id: number) {
     return null;
   }
 }
-const getCachedPost = nextCache(getPost, ["post-detail"], {
-  tags: ["post-detail-1"],
-  revalidate: 60,
-});
+function getCachedPost(postId: number) {
+  const cached = nextCache(getPost, ["post-detail"], {
+    tags: [`post-detail-${postId}`],
+    revalidate: 60,
+  });
+
+  return cached(postId);
+}
 
 async function getLikeStatus(postId: number, userId: number) {
   const isLiked = await db.like.findUnique({
@@ -69,7 +75,7 @@ async function getLikeStatus(postId: number, userId: number) {
 }
 
 /** tags에 변수를 넣어 캐시 데이터를 저장하는 방법 */
-export function getCachedLikeStatus(postId: number, userId: number) {
+function getCachedLikeStatus(postId: number, userId: number) {
   const cached = nextCache(
     // 변수명은 상관없음
     (postId, userId) => getLikeStatus(postId, userId),
@@ -80,6 +86,37 @@ export function getCachedLikeStatus(postId: number, userId: number) {
   );
   return cached(postId, userId);
 }
+
+async function getCommentList(postId: number) {
+  const comments = await db.comment.findMany({
+    where: {
+      postId,
+    },
+    select: {
+      id: true,
+      payload: true,
+      created_at: true,
+      user: {
+        select: {
+          avatar: true,
+          username: true,
+        },
+      },
+    },
+  });
+
+  return comments;
+}
+
+function getCachedCommentList(postId: number) {
+  const cached = nextCache(getCommentList, ["post-comment-list"], {
+    tags: [`post-comment-list-${postId}`],
+  });
+
+  return cached(postId);
+}
+
+export type CommentListType = Prisma.PromiseReturnType<typeof getCommentList>;
 
 export default async function PostDetail({
   params,
@@ -95,13 +132,14 @@ export default async function PostDetail({
 
   const post = await getCachedPost(id);
   const { isLiked, likeCount } = await getCachedLikeStatus(id, session.id!);
+  const comments = await getCachedCommentList(id);
 
   if (!post) {
     return notFound();
   }
 
   return (
-    <div className="p-5 text-white">
+    <div className="flex flex-col p-5 text-white">
       <div className="mb-2 flex items-center gap-2">
         <Image
           width={28}
@@ -126,6 +164,7 @@ export default async function PostDetail({
         </div>
         <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
+      <CommentList comments={comments} postId={id} userId={session.id!} />
     </div>
   );
 }

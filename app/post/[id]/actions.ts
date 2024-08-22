@@ -3,6 +3,7 @@
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { revalidateTag } from "next/cache";
+import { commentSchema } from "./schema";
 
 /** 좋아요 추가 */
 export async function likePost(postId: number) {
@@ -45,4 +46,30 @@ export async function dislikePost(postId: number) {
 
     revalidateTag(`like-status-${postId}`);
   } catch (error) {}
+}
+
+export async function createComment(formData: FormData) {
+  const data = {
+    payload: formData.get("payload"),
+    userId: formData.get("userId"),
+    postId: formData.get("postId"),
+  };
+
+  const result = commentSchema.safeParse(data);
+  if (!result.success) {
+    return result.error.flatten();
+  } else {
+    await db.comment.create({
+      data: {
+        payload: result.data.payload,
+        postId: result.data.postId,
+        userId: result.data.userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    revalidateTag(`post-comment-list-${result.data.postId}`);
+  }
 }
