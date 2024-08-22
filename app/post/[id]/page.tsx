@@ -1,13 +1,9 @@
+import LikeButton from "@/components/LikeButton";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
-import { EyeIcon, HandThumbUpIcon } from "@heroicons/react/24/solid";
-import { HandThumbUpIcon as OutlineHandThumbUpIcon } from "@heroicons/react/24/outline";
-import {
-  revalidatePath,
-  unstable_cache as nextCache,
-  revalidateTag,
-} from "next/cache";
+import { EyeIcon } from "@heroicons/react/24/solid";
+import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -44,7 +40,6 @@ async function getPost(id: number) {
     return null;
   }
 }
-
 const getCachedPost = nextCache(getPost, ["post-detail"], {
   tags: ["post-detail-1"],
   revalidate: 60,
@@ -74,8 +69,9 @@ async function getLikeStatus(postId: number, userId: number) {
 }
 
 /** tags에 변수를 넣어 캐시 데이터를 저장하는 방법 */
-function getCachedLikeStatus(postId: number, userId: number) {
-  const cached = nextCache( // 변수명은 상관없음
+export function getCachedLikeStatus(postId: number, userId: number) {
+  const cached = nextCache(
+    // 변수명은 상관없음
     (postId, userId) => getLikeStatus(postId, userId),
     ["post-like-status"],
     {
@@ -104,51 +100,6 @@ export default async function PostDetail({
     return notFound();
   }
 
-  /** 좋아요 추가 */
-  const likePost = async () => {
-    "use server";
-
-    try {
-      const session = await getSession();
-
-      await db.like.create({
-        data: {
-          postId: id,
-          userId: session.id!,
-        },
-      });
-
-      // 좋아요를 눌렀을 때 화면 갱신을 위한 캐시 초기화 (Bad Case)
-      // revalidatePath(`/posts/${id}`);
-
-      // 캐싱된 데이터들을 Tag로 관리할 때 사용할 수 있는 캐시 초기화
-      revalidateTag(`like-status-${id}`);
-    } catch (error) {}
-  };
-
-  /** 좋아요 삭제 */
-  const dislikePost = async () => {
-    "use server";
-
-    try {
-      const session = await getSession();
-
-      await db.like.delete({
-        where: {
-          id: {
-            postId: id,
-            userId: session.id!,
-          },
-        },
-      });
-
-      // 좋아요를 눌렀을 때 화면 갱신을 위한 캐시 초기화 (Bad Case)
-      // revalidatePath(`/posts/${id}`);
-
-      revalidateTag(`like-status-${id}`);
-    } catch (error) {}
-  };
-
   return (
     <div className="p-5 text-white">
       <div className="mb-2 flex items-center gap-2">
@@ -173,22 +124,7 @@ export default async function PostDetail({
           <EyeIcon className="size-5" />
           <span>조회 {post.views}</span>
         </div>
-        <form action={isLiked ? dislikePost : likePost}>
-          <button
-            className={`flex items-center gap-2 rounded-full border border-neutral-400 p-2 text-sm text-neutral-400 transition-colors hover:bg-neutral-800 ${isLiked ? "border-orange-500 bg-orange-500 text-white hover:bg-orange-500" : "hover:bg-neutral-800"}`}
-          >
-            {isLiked ? (
-              <HandThumbUpIcon className="size-5" />
-            ) : (
-              <OutlineHandThumbUpIcon className="size-5" />
-            )}
-            {isLiked ? (
-              <span>좋아요 {likeCount}</span>
-            ) : (
-              <span>좋아요 {likeCount}</span>
-            )}
-          </button>
-        </form>
+        <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
     </div>
   );
