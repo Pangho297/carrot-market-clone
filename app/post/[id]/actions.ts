@@ -49,6 +49,7 @@ export async function dislikePost(postId: number) {
 }
 
 export async function createComment(formData: FormData) {
+  await new Promise((r) => setTimeout(r, 10000));
   const data = {
     payload: formData.get("payload"),
     userId: formData.get("userId"),

@@ -5,7 +5,7 @@ import { CommentListType } from "@/app/post/[id]/page";
 import { CommentType } from "@/app/post/[id]/schema";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import Image from "next/image";
-import { useOptimistic } from "react";
+import { useOptimistic, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface CommentListProps {
@@ -19,13 +19,15 @@ export default function CommentList({
   postId,
   userId,
 }: CommentListProps) {
+  const [payload, setPayload] = useState("");
   const { reset, handleSubmit, register } = useForm<CommentType>();
-  const [state, reducer] = useOptimistic(comments, (prev) =>
-    prev.map((item) => ({
-      ...item,
-      payload: item.payload,
-    }))
-  );
+  const [state, reducer] = useOptimistic(comments, (prev) => [
+    ...prev,
+    {
+      ...prev[prev.length - 1],
+      payload,
+    },
+  ]);
 
   const onSubmit = handleSubmit(async (data) => {
     reducer(undefined);
@@ -69,6 +71,7 @@ export default function CommentList({
           {...register("payload")}
           required
           placeholder="모두와 함께하는 공간입니다 타인을 배려하는 마음으로 댓글을 남겨주세요"
+          onChange={(e) => setPayload(e.target.value)}
         />
         <button className="min-w-fit rounded-md bg-orange-500 p-5 text-white">
           댓글 작성
