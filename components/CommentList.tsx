@@ -5,13 +5,23 @@ import { CommentListType } from "@/app/post/[id]/page";
 import { CommentType } from "@/app/post/[id]/schema";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import Image from "next/image";
-import { useOptimistic, useState } from "react";
+import { Suspense, useOptimistic, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface CommentListProps {
   comments: CommentListType;
   postId: number;
   userId: number;
+}
+
+interface CommentDataType {
+  id: number;
+  payload: string;
+  created_at: Date;
+  user: {
+    username: string;
+    avatar: string;
+  };
 }
 
 export default function CommentList({
@@ -21,16 +31,21 @@ export default function CommentList({
 }: CommentListProps) {
   const [payload, setPayload] = useState("");
   const { reset, handleSubmit, register } = useForm<CommentType>();
-  const [state, reducer] = useOptimistic(comments, (prev) => [
-    ...prev,
-    {
-      ...prev[prev.length - 1],
-      payload,
-    },
-  ]);
+  const [state, reducer] = useOptimistic(
+    comments,
+    (prev, payload: CommentDataType) => [...prev, payload]
+  );
 
   const onSubmit = handleSubmit(async (data) => {
-    reducer(undefined);
+    reducer({
+      id: userId,
+      created_at: new Date(),
+      user: {
+        username: "Hello",
+        avatar: "",
+      },
+      payload,
+    });
     const formData = new FormData();
     formData.append("payload", data.payload);
     formData.append("userId", `${userId}`);
@@ -42,7 +57,14 @@ export default function CommentList({
 
   return (
     <div className="mt-8 flex flex-col justify-between border-t border-neutral-400">
-      <div className="h-full overflow-auto">
+      <Suspense
+        fallback={
+          <div className="flex flex-col gap-1">
+            <div className="h-5 w-40 rounded-md bg-neutral-700" />
+            <div className="h-5 w-20 rounded-md bg-neutral-700" />
+          </div>
+        }
+      >
         {state.map((item) => (
           <div
             key={item.id}
@@ -64,7 +86,7 @@ export default function CommentList({
             <p className="ml-9">{item.payload}</p>
           </div>
         ))}
-      </div>
+      </Suspense>
       <form className="flex gap-4" action={() => onSubmit()}>
         <textarea
           className="flex-3 w-full resize-none rounded-md bg-inherit"
