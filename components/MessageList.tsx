@@ -1,9 +1,11 @@
 "use client";
 
-import { MessageType } from "@/app/chats/[id]/page";
+import { createMessage } from "@/app/chats/[id]/actions";
+import { MessageType, UserType } from "@/app/chats/[id]/page";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
+import { revalidateTag } from "next/cache";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
@@ -11,12 +13,14 @@ interface MessageListProps {
   initialMessages: MessageType;
   userId: number;
   channelId: string;
+  user: UserType;
 }
 
 export default function MessageList({
   initialMessages,
   userId,
   channelId,
+  user,
 }: MessageListProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
@@ -30,7 +34,7 @@ export default function MessageList({
   };
 
   /** 메세지 전송 함수 */
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     // 메세지가 보내진 것처럼 보여지게 만들기 (Fake 메세지 추가)
     setMessages((prev) => [
@@ -50,7 +54,19 @@ export default function MessageList({
     channel.current?.send({
       type: "broadcast",
       event: "message",
-      payload: { message },
+      payload: {
+        id: Date.now(),
+        payload: message,
+        created_at: new Date(),
+        userId,
+        user,
+      },
+    });
+
+    await createMessage({
+      payload: message,
+      userId,
+      chatRoomId: channelId,
     });
 
     setMessage("");
@@ -68,8 +84,9 @@ export default function MessageList({
 
     // 채팅 채널 구독
     channel.current
-      .on("broadcast", { event: "message" }, (message) => {
+      .on("broadcast", { event: "message" }, async (message) => {
         console.log(message);
+        setMessages((prev) => [...prev, message.payload]); // 임시 메세지 표시
       })
       .subscribe();
 

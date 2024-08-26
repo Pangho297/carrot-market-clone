@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { Prisma } from "@prisma/client";
 import { notFound } from "next/navigation";
+import { unstable_cache as nextCache } from "next/cache";
 
 async function getRoom(id: string) {
   const room = await db.chatRoom.findUnique({
@@ -31,6 +32,24 @@ async function getRoom(id: string) {
   return room;
 }
 
+async function getUserProfile(id: number) {
+  const user = await db.user.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      username: true,
+      avatar: true,
+    },
+  });
+
+  return user;
+}
+
+const getCachedUserProfile = nextCache(getUserProfile, ["user-profile"], {
+  tags: ["user-profile"],
+});
+
 async function getMessages(chatRoomId: string) {
   const messages = await db.message.findMany({
     where: {
@@ -54,6 +73,7 @@ async function getMessages(chatRoomId: string) {
 }
 
 export type MessageType = Prisma.PromiseReturnType<typeof getMessages>;
+export type UserType = Prisma.PromiseReturnType<typeof getUserProfile>;
 
 export default async function ChatRoom({ params }: { params: { id: string } }) {
   const room = await getRoom(params.id);
@@ -64,11 +84,23 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
    * 때문에 무한 스크롤과 비슷하게 구현하기 위해 처음 렌더링됐을 때의 메세지를 따로 변수로 선언한다
    */
   const initialMessages = await getMessages(params.id);
-  const session = await getSession()
+  const session = await getSession();
+  const user = await getCachedUserProfile(session.id!);
+
+  if (!user) {
+    return notFound();
+  }
 
   if (!room) {
     return notFound();
   }
 
-  return <MessageList channelId={params.id} userId={session.id!} initialMessages={initialMessages} />;
+  return (
+    <MessageList
+      channelId={params.id}
+      userId={session.id!}
+      user={user}
+      initialMessages={initialMessages}
+    />
+  );
 }
