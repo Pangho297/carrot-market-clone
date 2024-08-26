@@ -64,6 +64,38 @@ export default async function Modal({ params }: { params: { id: string } }) {
     }
   };
 
+  const createChatRoom = async () => {
+    "use server";
+
+    const session = await getSession();
+
+    const room = await db.chatRoom.create({
+      data: {
+        users: {
+          connect: [
+            // 업로드 한 사용자
+            {
+              id: product.userId,
+            },
+            // 구매자
+            {
+              id: session.id,
+            },
+          ],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!Boolean(room)) {
+      return notFound();
+    }
+
+    return redirect(`/chats/${room.id}`);
+  };
+
   return (
     <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-60">
       <CloseModalBtn />
@@ -122,12 +154,11 @@ export default async function Modal({ params }: { params: { id: string } }) {
                 </Link>
               </div>
             ) : null}
-            <Link
-              href=""
-              className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white"
-            >
-              채팅
-            </Link>
+            <form action={createChatRoom}>
+              <button className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white">
+                채팅
+              </button>
+            </form>
           </div>
         </div>
       </div>

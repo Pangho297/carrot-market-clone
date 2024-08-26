@@ -124,6 +124,38 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     revalidateTag("product-title");
   };
 
+  const createChatRoom = async () => {
+    "use server";
+
+    const session = await getSession();
+
+    const room = await db.chatRoom.create({
+      data: {
+        users: {
+          connect: [
+            // 업로드 한 사용자
+            {
+              id: product.userId,
+            },
+            // 구매자
+            {
+              id: session.id,
+            },
+          ],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!Boolean(room)) {
+      return notFound();
+    }
+
+    return redirect(`/chats/${room.id}`);
+  };
+
   return (
     <div className="relative h-full">
       <div className="relative aspect-square">
@@ -174,12 +206,11 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
             </Link>
           </div>
         ) : null}
-        <Link
-          href=""
-          className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white"
-        >
-          채팅
-        </Link>
+        <form action={createChatRoom}>
+          <button className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white">
+            채팅
+          </button>
+        </form>
       </div>
     </div>
   );
