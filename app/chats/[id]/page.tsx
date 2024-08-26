@@ -70,5 +70,5 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
     return notFound();
   }
 
-  return <MessageList userId={session.id!} initialMessages={initialMessages} />;
+  return <MessageList channelId={params.id} userId={session.id!} initialMessages={initialMessages} />;
 }

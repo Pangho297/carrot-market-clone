@@ -3,20 +3,24 @@
 import { MessageType } from "@/app/chats/[id]/page";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
+import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import Image from "next/image";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 interface MessageListProps {
   initialMessages: MessageType;
   userId: number;
+  channelId: string;
 }
 
 export default function MessageList({
   initialMessages,
   userId,
+  channelId,
 }: MessageListProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
+  const channel = useRef<RealtimeChannel>();
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {
@@ -43,9 +47,36 @@ export default function MessageList({
       },
     ]);
 
-    
+    channel.current?.send({
+      type: "broadcast",
+      event: "message",
+      payload: { message },
+    });
+
     setMessage("");
   };
+
+  useEffect(() => {
+    // Supabase client 생성
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!
+    );
+
+    // 채널 생성
+    channel.current = client.channel(`channel-${channelId}`);
+
+    // 채팅 채널 구독
+    channel.current
+      .on("broadcast", { event: "message" }, (message) => {
+        console.log(message);
+      })
+      .subscribe();
+
+    return () => {
+      channel.current?.unsubscribe();
+    };
+  }, [channelId]);
 
   return (
     <div className="flex min-h-screen flex-col justify-end gap-5 p-5">
