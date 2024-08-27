@@ -21,7 +21,7 @@ export default function TabBar() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 mx-auto grid w-full max-w-screen-md grid-cols-5 border-t border-neutral-600 bg-neutral-800 px-5 py-3 *:text-white">
+    <div className="fixed bottom-0 mx-auto grid w-full max-w-screen-md grid-cols-4 border-t border-neutral-600 bg-neutral-800 px-5 py-3 *:text-white">
       <Link href="/home" className="flex flex-col items-center gap-px">
         {pathname === "/home" ? (
           <SolidHomeIcon className="h-7 w-7" />
@@ -38,22 +38,22 @@ export default function TabBar() {
         )}
         <span>동네생활</span>
       </Link>
-      <Link href="/chat" className="flex flex-col items-center gap-px">
-        {pathname === "/chat" ? (
+      <Link href="/chats" className="flex flex-col items-center gap-px">
+        {pathname === "/chats" ? (
           <SolidChatIcon className="h-7 w-7" />
         ) : (
           <OutlineChatIcon className="h-7 w-7" />
         )}
         <span>채팅</span>
       </Link>
-      <Link href="/live" className="flex flex-col items-center gap-px">
+      {/* <Link href="/live" className="flex flex-col items-center gap-px">
         {pathname === "/live" ? (
           <SolidVideoCameraIcon className="h-7 w-7" />
         ) : (
           <OutlineVideoCameraIcon className="h-7 w-7" />
         )}
         <span>쇼핑</span>
-      </Link>
+      </Link> */}
       <Link href="/profile" className="flex flex-col items-center gap-px">
         {pathname === "/profile" ? (
           <SolidUserIcon className="h-7 w-7" />

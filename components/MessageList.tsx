@@ -73,6 +73,7 @@ export default function MessageList({
   };
 
   useEffect(() => {
+    window.scrollTo(0, window.innerHeight);
     // Supabase client 생성
     const client = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -96,7 +97,7 @@ export default function MessageList({
   }, [channelId]);
 
   return (
-    <div className="flex min-h-screen flex-col justify-end gap-5 p-5">
+    <div className="flex min-h-screen flex-col justify-end gap-5 p-5 pb-20">
       {messages.map((message) => (
         <div
           key={message.id}
@@ -125,7 +126,10 @@ export default function MessageList({
           </div>
         </div>
       ))}
-      <form className="relative flex" onSubmit={onSubmit}>
+      <form
+        className="fixed bottom-0 left-5 flex w-full max-w-screen-md bg-neutral-900 p-5"
+        onSubmit={onSubmit}
+      >
         <input
           type="text"
           name="message"
@@ -135,7 +139,7 @@ export default function MessageList({
           className="placeholder: h-10 w-full rounded-full border-none bg-transparent px-5 text-neutral-200 ring-2 ring-neutral-200 transition focus:outline-none focus:ring-4 focus:ring-neutral-50"
         />
         <button type="submit">
-          <ArrowUpCircleIcon className="absolute right-0 top-0 size-10" />
+          <ArrowUpCircleIcon className="absolute right-5 top-5 size-10" />
         </button>
       </form>
     </div>

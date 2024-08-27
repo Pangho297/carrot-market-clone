@@ -27,6 +27,7 @@ export async function createMessage(data: createMessageProps) {
   }
 
   revalidateTag("user-profile");
+  revalidateTag("chat-list");
 
   return message;
 }

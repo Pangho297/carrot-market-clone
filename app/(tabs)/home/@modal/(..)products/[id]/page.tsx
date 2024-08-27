@@ -154,11 +154,13 @@ export default async function Modal({ params }: { params: { id: string } }) {
                 </Link>
               </div>
             ) : null}
-            <form action={createChatRoom}>
-              <button className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white">
-                채팅
-              </button>
-            </form>
+            {isOwner ? null : (
+              <form action={createChatRoom}>
+                <button className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white">
+                  채팅
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
