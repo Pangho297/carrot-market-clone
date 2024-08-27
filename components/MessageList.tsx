@@ -97,7 +97,7 @@ export default function MessageList({
   }, [channelId]);
 
   return (
-    <div className="flex min-h-screen flex-col justify-end gap-5 p-5 pb-20">
+    <div className="flex min-h-screen flex-col justify-end gap-5 p-5 pb-0">
       {messages.map((message) => (
         <div
           key={message.id}
@@ -127,7 +127,7 @@ export default function MessageList({
         </div>
       ))}
       <form
-        className="fixed bottom-0 left-5 flex w-full max-w-screen-md bg-neutral-900 p-5"
+        className="sticky bottom-0 flex w-full max-w-screen-md bg-neutral-900 p-5"
         onSubmit={onSubmit}
       >
         <input
@@ -136,6 +136,7 @@ export default function MessageList({
           required
           onChange={onChange}
           value={message}
+          autoComplete="off"
           className="placeholder: h-10 w-full rounded-full border-none bg-transparent px-5 text-neutral-200 ring-2 ring-neutral-200 transition focus:outline-none focus:ring-4 focus:ring-neutral-50"
         />
         <button type="submit">
