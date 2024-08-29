@@ -3,7 +3,7 @@
 import { createMessage } from "@/app/chats/[id]/actions";
 import { MessageType, UserType } from "@/app/chats/[id]/page";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
-import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
+import { ArrowUpCircleIcon, UserIcon } from "@heroicons/react/24/solid";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
@@ -102,19 +102,25 @@ export default function MessageList({
           className={`flex items-start gap-2 ${user_id === message.user_id ? "justify-end" : ""}`}
         >
           {user_id === message.user_id ? null : (
-            <Image
-              width={50}
-              height={50}
-              src={message.user.avatar ?? ""}
-              alt={message.user.username}
-              className="size-8 rounded-full"
-            />
+            <>
+              {message.user.avatar ? (
+                <Image
+                  width={50}
+                  height={50}
+                  src={message.user.avatar}
+                  alt={message.user.username}
+                  className="size-8 rounded-full"
+                />
+              ) : (
+                <UserIcon className="size-8 rounded-full" />
+              )}
+            </>
           )}
           <div
             className={`flex flex-col gap-1 ${user_id === message.user_id ? "items-end" : ""}`}
           >
             <span
-              className={`rounded-md px-2 py-1 ${user_id === message.user_id ? "bg-neutral-700" : "bg-orange-500"}`}
+              className={`rounded-md px-2 py-1 ${user_id === message.user_id ? "bg-orange-500" : "bg-neutral-700"}`}
             >
               {message.payload}
             </span>

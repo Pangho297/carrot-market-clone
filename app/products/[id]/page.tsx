@@ -129,8 +129,28 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
 
     const session = await getSession();
 
+    const existingRoom = await db.chatRoom.findFirst({
+      where: {
+        product_id: product.id,
+        user_list: {
+          some: {
+            id: session.id,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (existingRoom) {
+      revalidateTag("chat-list");
+      return redirect(`/chats/${existingRoom.id}`);
+    }
+
     const room = await db.chatRoom.create({
       data: {
+        product_id: product.id,
         user_list: {
           connect: [
             // 업로드 한 사용자
@@ -143,7 +163,6 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
             },
           ],
         },
-        product_id: product.id,
       },
       select: {
         id: true,

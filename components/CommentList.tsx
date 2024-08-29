@@ -4,6 +4,7 @@ import { createComment } from "@/app/post/[id]/actions";
 import { CommentListType } from "@/app/post/[id]/page";
 import { CommentType } from "@/app/post/[id]/schema";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
+import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { Suspense, useOptimistic, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -71,13 +72,17 @@ export default function CommentList({
             className="flex flex-col gap-2 border-b border-neutral-400 py-5 last:border-none"
           >
             <div className="flex items-center gap-2">
-              <Image
-                width={28}
-                height={28}
-                className="size-7 rounded-full"
-                src={item.user.avatar!}
-                alt={item.user.username}
-              />
+              {item.user.avatar ? (
+                <Image
+                  width={28}
+                  height={28}
+                  className="size-7 rounded-full"
+                  src={item.user.avatar}
+                  alt={item.user.username}
+                />
+              ) : (
+                <UserIcon className="size-7 rounded-full" />
+              )}
               <span className="text-xs">{item.user.username}</span>
               <p className="text-xs text-neutral-400">
                 {formatToTimeAgo(item.created_at.toString())}
@@ -87,7 +92,7 @@ export default function CommentList({
           </div>
         ))}
       </Suspense>
-      <form className="flex gap-4" action={() => onSubmit()}>
+      <form className="mt-4 flex gap-4" action={() => onSubmit()}>
         <textarea
           className="flex-3 w-full resize-none rounded-md bg-inherit"
           {...register("payload")}

@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import formatToWon from "@/utils/formatToWon";
 import { PhotoIcon, UserIcon } from "@heroicons/react/24/solid";
+import { revalidateTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -69,8 +70,28 @@ export default async function Modal({ params }: { params: { id: string } }) {
 
     const session = await getSession();
 
+    const existingRoom = await db.chatRoom.findFirst({
+      where: {
+        product_id: product.id,
+        user_list: {
+          some: {
+            id: session.id,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (existingRoom) {
+      revalidateTag("chat-list");
+      return redirect(`/chats/${existingRoom.id}`);
+    }
+
     const room = await db.chatRoom.create({
       data: {
+        product_id: product.id,
         user_list: {
           connect: [
             // 업로드 한 사용자
@@ -83,7 +104,6 @@ export default async function Modal({ params }: { params: { id: string } }) {
             },
           ],
         },
-        product_id: product.id,
       },
       select: {
         id: true,
@@ -93,7 +113,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
     if (!Boolean(room)) {
       return notFound();
     }
-
+    revalidateTag("chat-list");
     return redirect(`/chats/${room.id}`);
   };
 
