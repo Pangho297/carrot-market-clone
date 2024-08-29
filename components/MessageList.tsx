@@ -5,20 +5,19 @@ import { MessageType, UserType } from "@/app/chats/[id]/page";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
-import { revalidateTag } from "next/cache";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 interface MessageListProps {
   initialMessages: MessageType;
-  userId: number;
+  user_id: number;
   channelId: string;
   user: UserType;
 }
 
 export default function MessageList({
   initialMessages,
-  userId,
+  user_id,
   channelId,
   user,
 }: MessageListProps) {
@@ -43,7 +42,7 @@ export default function MessageList({
         id: Date.now(),
         payload: message,
         created_at: new Date(),
-        userId,
+        user_id,
         user: {
           username: "",
           avatar: "",
@@ -58,15 +57,15 @@ export default function MessageList({
         id: Date.now(),
         payload: message,
         created_at: new Date(),
-        userId,
+        user_id,
         user,
       },
     });
 
     await createMessage({
       payload: message,
-      userId,
-      chatRoomId: channelId,
+      user_id,
+      chatRoom_id: channelId,
     });
 
     setMessage("");
@@ -86,7 +85,6 @@ export default function MessageList({
     // 채팅 채널 구독
     channel.current
       .on("broadcast", { event: "message" }, async (message) => {
-        console.log(message);
         setMessages((prev) => [...prev, message.payload]); // 임시 메세지 표시
       })
       .subscribe();
@@ -101,9 +99,9 @@ export default function MessageList({
       {messages.map((message) => (
         <div
           key={message.id}
-          className={`flex items-start gap-2 ${userId === message.userId ? "justify-end" : ""}`}
+          className={`flex items-start gap-2 ${user_id === message.user_id ? "justify-end" : ""}`}
         >
-          {userId === message.userId ? null : (
+          {user_id === message.user_id ? null : (
             <Image
               width={50}
               height={50}
@@ -113,10 +111,10 @@ export default function MessageList({
             />
           )}
           <div
-            className={`flex flex-col gap-1 ${userId === message.userId ? "items-end" : ""}`}
+            className={`flex flex-col gap-1 ${user_id === message.user_id ? "items-end" : ""}`}
           >
             <span
-              className={`rounded-md px-2 py-1 ${userId === message.userId ? "bg-neutral-700" : "bg-orange-500"}`}
+              className={`rounded-md px-2 py-1 ${user_id === message.user_id ? "bg-neutral-700" : "bg-orange-500"}`}
             >
               {message.payload}
             </span>

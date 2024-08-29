@@ -5,17 +5,17 @@ import { revalidateTag } from "next/cache";
 
 interface createMessageProps {
   payload: string;
-  userId: number;
-  chatRoomId: string;
+  user_id: number;
+  chatRoom_id: string;
 }
 
 export async function createMessage(data: createMessageProps) {
-  const { payload, userId, chatRoomId } = data;
+  const { payload, user_id, chatRoom_id } = data;
   const message = await db.message.create({
     data: {
       payload,
-      userId,
-      chatRoomId,
+      user_id,
+      chatRoom_id,
     },
     select: {
       id: true,

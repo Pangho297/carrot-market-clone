@@ -9,9 +9,9 @@ import { notFound, redirect } from "next/navigation";
 
 new Promise((resolve) => setTimeout(resolve, 10000));
 
-async function getIsOwner(userId: number) {
+async function getIsOwner(user_id: number) {
   const session = await getSession();
-  return session.id === userId;
+  return session.id === user_id;
 }
 
 async function getProduct(id: number) {
@@ -45,7 +45,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
     return notFound();
   }
 
-  const isOwner = await getIsOwner(product.userId);
+  const isOwner = await getIsOwner(product.user_id);
 
   const deleteProduct = async () => {
     "use server";
@@ -71,11 +71,11 @@ export default async function Modal({ params }: { params: { id: string } }) {
 
     const room = await db.chatRoom.create({
       data: {
-        users: {
+        user_list: {
           connect: [
             // 업로드 한 사용자
             {
-              id: product.userId,
+              id: product.user_id,
             },
             // 구매자
             {
@@ -83,6 +83,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
             },
           ],
         },
+        product_id: product.id,
       },
       select: {
         id: true,

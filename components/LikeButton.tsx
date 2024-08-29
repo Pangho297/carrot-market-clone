@@ -8,13 +8,13 @@ import { dislikePost, likePost } from "@/app/post/[id]/actions";
 interface LikeButtonProps {
   isLiked: boolean;
   likeCount: number;
-  postId: number;
+  post_id: number;
 }
 
 export default function LikeButton({
   isLiked,
   likeCount,
-  postId,
+  post_id,
 }: LikeButtonProps) {
   const [state, reducer] = useOptimistic({ isLiked, likeCount }, (prev) => ({
     isLiked: !prev.isLiked,
@@ -25,9 +25,9 @@ export default function LikeButton({
     reducer(undefined);
 
     if (isLiked) {
-      await dislikePost(postId);
+      await dislikePost(post_id);
     } else {
-      await likePost(postId);
+      await likePost(post_id);
     }
   };
 

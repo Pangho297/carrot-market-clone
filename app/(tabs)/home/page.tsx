@@ -1,4 +1,3 @@
-import ListProduct from "@/components/Product";
 import ProductList from "@/components/ProductList";
 import { PAGE_LIMIT } from "@/lib/constants";
 import db from "@/lib/db";

@@ -31,7 +31,7 @@ async function getPost(id: number) {
         },
         _count: {
           select: {
-            Comments: true,
+            comment_list: true,
           },
         },
       },
@@ -42,29 +42,29 @@ async function getPost(id: number) {
     return null;
   }
 }
-function getCachedPost(postId: number) {
+function getCachedPost(post_id: number) {
   const cached = nextCache(getPost, ["post-detail"], {
-    tags: [`post-detail-${postId}`],
+    tags: [`post-detail-${post_id}`],
     revalidate: 60,
   });
 
-  return cached(postId);
+  return cached(post_id);
 }
 
-async function getLikeStatus(postId: number, userId: number) {
+async function getLikeStatus(post_id: number, user_id: number) {
   const isLiked = await db.like.findUnique({
     // 게시글에 좋아요를 누른지에 대한값을 얻기위한 db 접근
     where: {
       id: {
-        postId,
-        userId,
+        post_id,
+        user_id,
       },
     },
   });
   const likeCount = await db.like.count({
     // like개수만 받기위한 db 접근
     where: {
-      postId,
+      post_id,
     },
   });
 
@@ -75,22 +75,22 @@ async function getLikeStatus(postId: number, userId: number) {
 }
 
 /** tags에 변수를 넣어 캐시 데이터를 저장하는 방법 */
-function getCachedLikeStatus(postId: number, userId: number) {
+function getCachedLikeStatus(post_id: number, user_id: number) {
   const cached = nextCache(
     // 변수명은 상관없음
-    (postId, userId) => getLikeStatus(postId, userId),
+    (post_id, user_id) => getLikeStatus(post_id, user_id),
     ["post-like-status"],
     {
-      tags: [`like-status-${postId}`],
+      tags: [`like-status-${post_id}`],
     }
   );
-  return cached(postId, userId);
+  return cached(post_id, user_id);
 }
 
-async function getCommentList(postId: number) {
+async function getCommentList(post_id: number) {
   const comments = await db.comment.findMany({
     where: {
-      postId,
+      post_id,
     },
     select: {
       id: true,
@@ -108,12 +108,12 @@ async function getCommentList(postId: number) {
   return comments;
 }
 
-function getCachedCommentList(postId: number) {
+function getCachedCommentList(post_id: number) {
   const cached = nextCache(getCommentList, ["post-comment-list"], {
-    tags: [`post-comment-list-${postId}`],
+    tags: [`post-comment-list-${post_id}`],
   });
 
-  return cached(postId);
+  return cached(post_id);
 }
 
 export type CommentListType = Prisma.PromiseReturnType<typeof getCommentList>;
@@ -162,9 +162,9 @@ export default async function PostDetail({
           <EyeIcon className="size-5" />
           <span>조회 {post.views}</span>
         </div>
-        <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
+        <LikeButton isLiked={isLiked} likeCount={likeCount} post_id={id} />
       </div>
-      <CommentList comments={comments} postId={id} userId={session.id!} />
+      <CommentList comments={comments} post_id={id} user_id={session.id!} />
     </div>
   );
 }

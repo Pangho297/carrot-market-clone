@@ -16,8 +16,8 @@ async function getPosts() {
       created_at: true,
       _count: {
         select: {
-          Comments: true,
-          Likes: true,
+          comment_list: true,
+          like_list: true,
         },
       },
     },
@@ -52,11 +52,11 @@ export default async function Life() {
             <div className="flex items-center gap-4 *:flex *:items-center *:gap-1">
               <span>
                 <HandThumbUpIcon className="size-4" />
-                {post._count.Likes}
+                {post._count.like_list}
               </span>
               <span>
                 <ChatBubbleBottomCenterIcon className="size-4" />
-                {post._count.Comments}
+                {post._count.comment_list}
               </span>
             </div>
           </div>

@@ -47,7 +47,7 @@ const tokenSchema = z.coerce
   .max(999999)
   .refine(tokenExists, "인증번호가 유효하지 않습니다");
 
-  /** 토큰을 사용자에게 보낸 시점의 전화번호와 입력 시점의 전화번호 확인 */
+/** 토큰을 사용자에게 보낸 시점의 전화번호와 입력 시점의 전화번호 확인 */
 const phoneCheck = z
   .string()
   .trim()
@@ -163,12 +163,12 @@ export async function smsLogin(prev: ActionState, formData: FormData) {
           },
           select: {
             id: true,
-            userId: true,
+            user_id: true,
           },
         });
 
         // 사용자 로그인 (tokenSchema에서 토큰 검증 완료함)
-        userLogin({ id: token!.userId });
+        userLogin({ id: token!.user_id });
         // 사용한 토큰 제거
         await db.sMSToken.delete({
           where: {

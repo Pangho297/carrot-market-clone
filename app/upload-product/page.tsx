@@ -59,19 +59,22 @@ export default function UploadProduct() {
   const onSubmit = handleSubmit(async (data: ProductFormType) => {
     // Cloudflare에 이미지 업로드
     // 파일 업로드 안된경우 방지
-    if (!file) {
-      return;
-    }
+    if (!isModify) {
+      
+      if (!file) {
+        return;
+      }
 
-    const cloudflareForm = new FormData();
-    cloudflareForm.append("file", file);
-    const res = await fetch(uploadUrl, {
-      method: "POST",
-      body: cloudflareForm,
-    });
+      const cloudflareForm = new FormData();
+      cloudflareForm.append("file", file);
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        body: cloudflareForm,
+      });
 
-    if (res.status !== 200) {
-      return alert("이미지 업로드에 실패했습니다 다시 시도해주세요");
+      if (res.status !== 200) {
+        return alert("이미지 업로드에 실패했습니다 다시 시도해주세요");
+      }
     }
 
     // formData 생성

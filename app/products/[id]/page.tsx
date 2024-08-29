@@ -15,9 +15,9 @@ interface ProductDetailProps {
   params: ParamsType;
 }
 
-async function getIsOwner(userId: number) {
+async function getIsOwner(user_id: number) {
   const session = await getSession();
-  return session.id === userId;
+  return session.id === user_id;
 }
 
 /** fetch 요청의 cache 저장
@@ -99,7 +99,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
     return notFound();
   }
 
-  const isOwner = await getIsOwner(product.userId);
+  const isOwner = await getIsOwner(product.user_id);
 
   const deleteProduct = async () => {
     "use server";
@@ -131,11 +131,11 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
 
     const room = await db.chatRoom.create({
       data: {
-        users: {
+        user_list: {
           connect: [
             // 업로드 한 사용자
             {
-              id: product.userId,
+              id: product.user_id,
             },
             // 구매자
             {
@@ -143,6 +143,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
             },
           ],
         },
+        product_id: product.id,
       },
       select: {
         id: true,

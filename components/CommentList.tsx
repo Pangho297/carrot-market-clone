@@ -10,8 +10,8 @@ import { useForm } from "react-hook-form";
 
 interface CommentListProps {
   comments: CommentListType;
-  postId: number;
-  userId: number;
+  post_id: number;
+  user_id: number;
 }
 
 interface CommentDataType {
@@ -26,8 +26,8 @@ interface CommentDataType {
 
 export default function CommentList({
   comments,
-  postId,
-  userId,
+  post_id,
+  user_id,
 }: CommentListProps) {
   const [payload, setPayload] = useState("");
   const { reset, handleSubmit, register } = useForm<CommentType>();
@@ -38,7 +38,7 @@ export default function CommentList({
 
   const onSubmit = handleSubmit(async (data) => {
     reducer({
-      id: userId,
+      id: user_id,
       created_at: new Date(),
       user: {
         username: "Hello",
@@ -48,8 +48,8 @@ export default function CommentList({
     });
     const formData = new FormData();
     formData.append("payload", data.payload);
-    formData.append("userId", `${userId}`);
-    formData.append("postId", `${postId}`);
+    formData.append("user_id", `${user_id}`);
+    formData.append("post_id", `${post_id}`);
 
     createComment(formData);
     reset();

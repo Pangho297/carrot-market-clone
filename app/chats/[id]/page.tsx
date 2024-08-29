@@ -12,7 +12,7 @@ async function getRoom(id: string) {
     },
     // 채팅방 사용자 확인을 위한 채팅방에 소속된 사용자의 id도 함께 받음
     include: {
-      users: {
+      user_list: {
         select: {
           id: true,
         },
@@ -22,7 +22,9 @@ async function getRoom(id: string) {
 
   if (room) {
     const session = await getSession();
-    const canSee = Boolean(room.users.find((user) => user.id === session.id));
+    const canSee = Boolean(
+      room.user_list.find((user) => user.id === session.id)
+    );
 
     if (!canSee) {
       return null;
@@ -50,16 +52,16 @@ const getCachedUserProfile = nextCache(getUserProfile, ["user-profile"], {
   tags: ["user-profile"],
 });
 
-async function getMessages(chatRoomId: string) {
+async function getMessages(chatRoom_id: string) {
   const messages = await db.message.findMany({
     where: {
-      chatRoomId,
+      chatRoom_id,
     },
     select: {
       id: true,
       payload: true,
       created_at: true,
-      userId: true,
+      user_id: true,
       user: {
         select: {
           avatar: true,
@@ -98,7 +100,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   return (
     <MessageList
       channelId={params.id}
-      userId={session.id!}
+      user_id={session.id!}
       user={user}
       initialMessages={initialMessages}
     />
