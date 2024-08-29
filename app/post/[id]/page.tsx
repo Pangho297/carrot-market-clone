@@ -4,10 +4,11 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
 import { EyeIcon, UserIcon } from "@heroicons/react/24/solid";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { Prisma } from "@prisma/client";
-import { unstable_cache as nextCache } from "next/cache";
+import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 async function getPost(id: number) {
   try {
@@ -37,18 +38,12 @@ async function getPost(id: number) {
       },
     });
 
+    revalidateTag("post-list");
+
     return post;
   } catch (error) {
     return null;
   }
-}
-function getCachedPost(post_id: number) {
-  const cached = nextCache(getPost, ["post-detail"], {
-    tags: [`post-detail-${post_id}`],
-    revalidate: 60,
-  });
-
-  return cached(post_id);
 }
 
 async function getLikeStatus(post_id: number, user_id: number) {
@@ -98,6 +93,7 @@ async function getCommentList(post_id: number) {
       created_at: true,
       user: {
         select: {
+          id: true,
           avatar: true,
           username: true,
         },
@@ -130,12 +126,30 @@ export default async function PostDetail({
     return notFound();
   }
 
-  const post = await getCachedPost(id);
+  const post = await getPost(id);
   const { isLiked, likeCount } = await getCachedLikeStatus(id, session.id!);
   const comments = await getCachedCommentList(id);
 
   if (!post) {
     return notFound();
+  }
+
+  const isOwner = session.id === post.user_id;
+
+  async function deletePost() {
+    "use server";
+
+    await db.post.delete({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    revalidateTag("post-list");
+    redirect("/life");
   }
 
   return (
@@ -166,7 +180,16 @@ export default async function PostDetail({
           <EyeIcon className="size-5" />
           <span>조회 {post.views}</span>
         </div>
-        <LikeButton isLiked={isLiked} likeCount={likeCount} post_id={id} />
+        <div className="flex w-full items-center justify-between">
+          <LikeButton isLiked={isLiked} likeCount={likeCount} post_id={id} />
+          {isOwner ? (
+            <form action={deletePost}>
+              <button className="rounded-full border border-neutral-400 p-2 transition-colors hover:bg-neutral-800">
+                <TrashIcon className="size-5 text-red-500" />
+              </button>
+            </form>
+          ) : null}
+        </div>
       </div>
       <CommentList comments={comments} post_id={id} user_id={session.id!} />
     </div>

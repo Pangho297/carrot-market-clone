@@ -1,9 +1,11 @@
 "use client";
 
-import { createComment } from "@/app/post/[id]/actions";
+import { createComment, deleteComment } from "@/app/post/[id]/actions";
 import { CommentListType } from "@/app/post/[id]/page";
 import { CommentType } from "@/app/post/[id]/schema";
+import db from "@/lib/db";
 import formatToTimeAgo from "@/utils/formatToTimeAgo";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { Suspense, useOptimistic, useState } from "react";
@@ -20,6 +22,7 @@ interface CommentDataType {
   payload: string;
   created_at: Date;
   user: {
+    id: number;
     username: string;
     avatar: string;
   };
@@ -42,6 +45,7 @@ export default function CommentList({
       id: user_id,
       created_at: new Date(),
       user: {
+        id: user_id,
         username: "Hello",
         avatar: "",
       },
@@ -69,26 +73,37 @@ export default function CommentList({
         {state.map((item) => (
           <div
             key={item.id}
-            className="flex flex-col gap-2 border-b border-neutral-400 py-5 last:border-none"
+            className="flex items-center justify-between gap-2 border-b border-neutral-400 py-5 last:border-none"
           >
-            <div className="flex items-center gap-2">
-              {item.user.avatar ? (
-                <Image
-                  width={28}
-                  height={28}
-                  className="size-7 rounded-full"
-                  src={item.user.avatar}
-                  alt={item.user.username}
-                />
-              ) : (
-                <UserIcon className="size-7 rounded-full" />
-              )}
-              <span className="text-xs">{item.user.username}</span>
-              <p className="text-xs text-neutral-400">
-                {formatToTimeAgo(item.created_at.toString())}
-              </p>
+            <div>
+              <div className="flex items-center gap-2">
+                {item.user.avatar ? (
+                  <Image
+                    width={28}
+                    height={28}
+                    className="size-7 rounded-full"
+                    src={item.user.avatar}
+                    alt={item.user.username}
+                  />
+                ) : (
+                  <UserIcon className="size-7 rounded-full" />
+                )}
+                <span className="text-xs">{item.user.username}</span>
+                <p className="text-xs text-neutral-400">
+                  {formatToTimeAgo(item.created_at.toString())}
+                </p>
+              </div>
+              <p className="ml-9">{item.payload}</p>
             </div>
-            <p className="ml-9">{item.payload}</p>
+            {item.user.id === user_id ? (
+              <form action={deleteComment}>
+                <input value={item.id} name="id" className="hidden" />
+                <input value={post_id} name="post_id" className="hidden" />
+                <button className="rounded-full border border-neutral-400 p-2 transition-colors hover:bg-neutral-800">
+                  <TrashIcon className="size-5 text-red-500" />
+                </button>
+              </form>
+            ) : null}
           </div>
         ))}
       </Suspense>

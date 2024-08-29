@@ -4,6 +4,7 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { revalidateTag } from "next/cache";
 import { commentSchema } from "./schema";
+import { redirect } from "next/navigation";
 
 /** 좋아요 추가 */
 export async function likePost(post_id: number) {
@@ -73,4 +74,25 @@ export async function createComment(formData: FormData) {
 
     revalidateTag(`post-comment-list-${result.data.post_id}`);
   }
+}
+
+export async function deleteComment(formData: FormData) {
+  "use server";
+
+  const data = {
+    id: formData.get("id"),
+    post_id: formData.get("post_id"),
+  };
+
+  if (!data) {
+    return;
+  }
+
+  await db.comment.delete({
+    where: {
+      id: parseInt(data.id?.toString() ?? ""),
+    },
+  });
+
+  revalidateTag(`post-comment-list-${data.post_id}`);
 }

@@ -4,6 +4,8 @@ import {
   ChatBubbleBottomCenterIcon,
   HandThumbUpIcon,
 } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { unstable_cache as nextCache } from "next/cache";
 import Link from "next/link";
 
 async function getPosts() {
@@ -26,12 +28,16 @@ async function getPosts() {
   return posts;
 }
 
+const getCachedPosts = nextCache(getPosts, ["post-list"], {
+  tags: ["post-list"],
+});
+
 export const metadata = {
   title: "동네생활",
 };
 
 export default async function Life() {
-  const posts = await getPosts();
+  const posts = await getCachedPosts();
 
   return (
     <div className="flex flex-col p-5">
@@ -62,6 +68,12 @@ export default async function Life() {
           </div>
         </Link>
       ))}
+      <Link
+        href="/upload-life"
+        className="fixed bottom-24 right-8 flex size-16 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-400"
+      >
+        <PlusIcon className="size-10" />
+      </Link>
     </div>
   );
 }
