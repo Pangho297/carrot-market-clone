@@ -95,43 +95,45 @@ export default function MessageList({
   }, [channelId]);
 
   return (
-    <div className="flex min-h-screen flex-col justify-end gap-5 p-5 pb-0">
-      {messages.map((message) => (
-        <div
-          key={message.id}
-          className={`flex items-start gap-2 ${user_id === message.user_id ? "justify-end" : ""}`}
-        >
-          {user_id === message.user_id ? null : (
-            <>
-              {message.user.avatar ? (
-                <Image
-                  width={50}
-                  height={50}
-                  src={message.user.avatar}
-                  alt={message.user.username}
-                  className="size-8 rounded-full"
-                />
-              ) : (
-                <UserIcon className="size-8 rounded-full" />
-              )}
-            </>
-          )}
+    <div className="h-full p-5 pb-20">
+      <div className="flex flex-col justify-end gap-5">
+        {messages.map((message) => (
           <div
-            className={`flex flex-col gap-1 ${user_id === message.user_id ? "items-end" : ""}`}
+            key={message.id}
+            className={`flex items-start gap-2 ${user_id === message.user_id ? "justify-end" : ""}`}
           >
-            <span
-              className={`rounded-md px-2 py-1 ${user_id === message.user_id ? "bg-orange-500" : "bg-neutral-700"}`}
+            {user_id === message.user_id ? null : (
+              <>
+                {message.user.avatar ? (
+                  <Image
+                    width={50}
+                    height={50}
+                    src={message.user.avatar}
+                    alt={message.user.username}
+                    className="size-8 rounded-full"
+                  />
+                ) : (
+                  <UserIcon className="size-8 rounded-full" />
+                )}
+              </>
+            )}
+            <div
+              className={`flex max-w-[75%] flex-col gap-1 ${user_id === message.user_id ? "items-end" : ""}`}
             >
-              {message.payload}
-            </span>
-            <span className="text-xs">
-              {formatToTimeAgo(message.created_at.toString())}
-            </span>
+              <span
+                className={`rounded-md px-2 py-1 ${user_id === message.user_id ? "bg-orange-500" : "bg-neutral-700"}`}
+              >
+                {message.payload}
+              </span>
+              <span className="text-xs">
+                {formatToTimeAgo(message.created_at.toString())}
+              </span>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <form
-        className="sticky bottom-0 flex w-full max-w-screen-md bg-neutral-900 p-5"
+        className="fixed bottom-0 flex w-full max-w-screen-md bg-neutral-900 p-5"
         onSubmit={onSubmit}
       >
         <input

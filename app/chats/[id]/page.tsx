@@ -4,6 +4,8 @@ import getSession from "@/lib/session";
 import { Prisma } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
+import Image from "next/image";
+import { UserIcon } from "@heroicons/react/24/solid";
 
 async function getRoom(id: string) {
   const room = await db.chatRoom.findUnique({
@@ -74,11 +76,32 @@ async function getMessages(chatRoom_id: string) {
   return messages;
 }
 
+async function getProduct(id: number) {
+  const product = await db.product.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      title: true,
+      photo: true,
+      price: true,
+      user_id: true,
+    },
+  });
+
+  return product;
+}
+
 export type MessageType = Prisma.PromiseReturnType<typeof getMessages>;
 export type UserType = Prisma.PromiseReturnType<typeof getUserProfile>;
 
 export default async function ChatRoom({ params }: { params: { id: string } }) {
   const room = await getRoom(params.id);
+
+  if (!room) {
+    return notFound();
+  }
+
   /** 메세지는 새로 생성되거나 수정됐을 때 변경이 일어남을 알아야 하고
    *
    * 새로운 메세지가 들어왔을 때마다 메세지를 추가로 로드해줘야 한다
@@ -88,21 +111,69 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const initialMessages = await getMessages(params.id);
   const session = await getSession();
   const user = await getCachedUserProfile(session.id!);
+  const roomOwner = await getCachedUserProfile(
+    room.user_list.filter((user) => user.id !== session.id)[0].id
+  );
+  const product = await getProduct(room.product_id);
 
-  if (!user) {
+  if (!user || !roomOwner) {
     return notFound();
   }
 
-  if (!room) {
+  if (!product) {
     return notFound();
   }
+
+  const isOwner = product.user_id === session.id;
 
   return (
-    <MessageList
-      channelId={params.id}
-      user_id={session.id!}
-      user={user}
-      initialMessages={initialMessages}
-    />
+    <div className="relative min-h-full">
+      <div className="sticky top-0 h-full w-full items-center gap-5 bg-neutral-900 p-5">
+        <div className="mb-4 flex items-center gap-5">
+          {roomOwner.avatar ? (
+            <Image
+              width={60}
+              height={60}
+              src={roomOwner.avatar}
+              alt={roomOwner.username}
+              className="size-16 rounded-full"
+            />
+          ) : (
+            <UserIcon className="size-16 rounded-full" />
+          )}
+          <h1 className="text-2xl">{roomOwner.username}</h1>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex gap-5">
+            <Image
+              width={64}
+              height={80}
+              src={`${product.photo}/avatar`}
+              alt={product.title}
+              className="h-20 w-16 rounded-md object-cover"
+            />
+            <div className="flex flex-col justify-center">
+              <h1 className="text-xl font-bold">{product.title}</h1>
+              <span className="text-xl font-bold">
+                {product.price.toLocaleString("ko-KR")}원
+              </span>
+            </div>
+          </div>
+          {isOwner ? (
+            <form>
+              <button className="rounded-md bg-orange-500 p-2">
+                판매 완료
+              </button>
+            </form>
+          ) : null}
+        </div>
+      </div>
+      <MessageList
+        channelId={params.id}
+        user_id={session.id!}
+        user={user}
+        initialMessages={initialMessages}
+      />
+    </div>
   );
 }
