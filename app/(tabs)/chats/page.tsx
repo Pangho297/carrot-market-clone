@@ -26,6 +26,7 @@ async function getChats(user_id: number) {
         select: {
           photo: true,
           title: true,
+          is_sold: true,
         },
       },
     },

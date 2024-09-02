@@ -2,6 +2,7 @@
 
 import db from "@/lib/db";
 import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 interface createMessageProps {
   payload: string;
@@ -30,4 +31,18 @@ export async function createMessage(data: createMessageProps) {
   revalidateTag("chat-list");
 
   return message;
+}
+
+export async function soldProduct(id: number) {
+  await db.product.update({
+    where: {
+      id,
+    },
+    data: {
+      is_sold: true,
+    },
+  });
+
+  revalidateTag("product-list");
+  redirect("/home");
 }

@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { UserIcon } from "@heroicons/react/24/solid";
+import SoldButton from "@/components/SoldButton";
 
 async function getRoom(id: string) {
   const room = await db.chatRoom.findUnique({
@@ -82,10 +83,12 @@ async function getProduct(id: number) {
       id,
     },
     select: {
+      id: true,
       title: true,
       photo: true,
       price: true,
       user_id: true,
+      is_sold: true,
     },
   });
 
@@ -94,6 +97,7 @@ async function getProduct(id: number) {
 
 export type MessageType = Prisma.PromiseReturnType<typeof getMessages>;
 export type UserType = Prisma.PromiseReturnType<typeof getUserProfile>;
+export type ChatRoomProductType = Prisma.PromiseReturnType<typeof getProduct>;
 
 export default async function ChatRoom({ params }: { params: { id: string } }) {
   const room = await getRoom(params.id);
@@ -128,7 +132,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
 
   return (
     <div className="relative min-h-full">
-      <div className="sticky top-0 h-full w-full items-center gap-5 bg-neutral-900 p-5">
+      <div className="sticky top-0 h-full w-full items-center gap-5 bg-neutral-800 p-5">
         <div className="mb-4 flex items-center gap-5">
           {roomOwner.avatar ? (
             <Image
@@ -152,20 +156,14 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
               alt={product.title}
               className="h-20 w-16 rounded-md object-cover"
             />
-            <div className="flex flex-col justify-center">
-              <h1 className="text-xl font-bold">{product.title}</h1>
-              <span className="text-xl font-bold">
-                {product.price.toLocaleString("ko-KR")}원
-              </span>
+            <div
+              className={`flex flex-col justify-center *:text-xl *:font-bold ${product.is_sold ? "*:text-neutral-500 *:line-through" : ""}`}
+            >
+              <h1>{product.title}</h1>
+              <span>{product.price.toLocaleString("ko-KR")}원</span>
             </div>
           </div>
-          {isOwner ? (
-            <form>
-              <button className="rounded-md bg-orange-500 p-2">
-                판매 완료
-              </button>
-            </form>
-          ) : null}
+          {isOwner ? <SoldButton product={product} /> : null}
         </div>
       </div>
       <MessageList
