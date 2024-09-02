@@ -16,7 +16,7 @@ export default function Button({ loadingText, ...rest }: Props) {
 
   return (
     <button
-      className={`primary-btn h-10 disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:text-neutral-300 ${rest.className}`}
+      className={`primary-btn flex h-10 items-center justify-center disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:text-neutral-300 ${rest.className}`}
       disabled={pending}
       {...rest}
     >

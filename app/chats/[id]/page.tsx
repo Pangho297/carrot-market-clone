@@ -2,11 +2,12 @@ import MessageList from "@/components/MessageList";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { Prisma } from "@prisma/client";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { UserIcon } from "@heroicons/react/24/solid";
 import SoldButton from "@/components/SoldButton";
+import Link from "next/link";
 
 async function getRoom(id: string) {
   const room = await db.chatRoom.findUnique({
@@ -43,8 +44,14 @@ async function getUserProfile(id: number) {
       id,
     },
     select: {
+      id: true,
       username: true,
       avatar: true,
+      target_review_list: {
+        where: {
+          writer_id: id,
+        },
+      },
     },
   });
 
@@ -163,7 +170,18 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
               <span>{product.price.toLocaleString("ko-KR")}원</span>
             </div>
           </div>
-          {isOwner ? <SoldButton product={product} /> : null}
+          {isOwner ? (
+            <SoldButton product={product} />
+          ) : !isOwner &&
+            product.is_sold &&
+            roomOwner.target_review_list.length === 0 ? (
+            <Link
+              href={`/review?target=${roomOwner.id}`}
+              className="rounded-md bg-orange-500 p-2 text-white"
+            >
+              리뷰 남기기
+            </Link>
+          ) : null}
         </div>
       </div>
       <MessageList

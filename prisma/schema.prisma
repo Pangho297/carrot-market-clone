@@ -8,24 +8,25 @@ datasource db {
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
-  username      String     @unique
-  email         String?    @unique
-  password      String?
-  phone         String?    @unique
-  google_id     String?    @unique
-  github_id     String?    @unique
-  avatar        String?
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
-  SMSToken      SMSToken[]
-  product_list  Product[]
-  post          Post[]
-  comment       Comment[]
-  like          Like[]
-  chatRoom_list ChatRoom[]
-  message_list  Message[]
-  review_list   Review[]
+  id                 Int        @id @default(autoincrement())
+  username           String     @unique
+  email              String?    @unique
+  password           String?
+  phone              String?    @unique
+  google_id          String?    @unique
+  github_id          String?    @unique
+  avatar             String?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+  SMSToken           SMSToken[]
+  product_list       Product[]
+  post               Post[]
+  comment            Comment[]
+  like               Like[]
+  chatRoom_list      ChatRoom[]
+  message_list       Message[]
+  target_review_list Review[]   @relation("target") // 내가 받은 리뷰
+  write_review_list  Review[]   @relation("writer") // 내가 작성한 리뷰
 }
 
 model SMSToken {
@@ -113,11 +114,14 @@ model Message {
 }
 
 model Review {
-  id        Int    @id @default(autoincrement())
-  writer    User   @relation(fields: [writer_id], references: [id])
+  writer    User   @relation(fields: [writer_id], references: [id], name: "writer", onDelete: Cascade) // 리뷰 작성자
   writer_id Int
+  target    User   @relation(fields: [target_id], references: [id], name: "target", onDelete: Cascade) // 리뷰 대상자
+  target_id Int
   payload   String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@id(name: "id", [writer_id, target_id])
 }

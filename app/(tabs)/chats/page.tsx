@@ -88,11 +88,18 @@ export default async function Chat() {
                 </div>
               </div>
               <div className="flex items-end gap-4">
-                <div className="text-neutral-400">
-                  {formatToTimeAgo(
-                    chat.message_list.at(-1)?.created_at.toString() ??
-                      new Date().toString()
-                  )}
+                <div className="flex flex-col items-end gap-2">
+                  {chat.product.is_sold ? (
+                    <p className="rounded-md bg-neutral-600 p-1 text-xs text-white">
+                      판매 완료
+                    </p>
+                  ) : null}
+                  <div className="text-xs text-neutral-400">
+                    {formatToTimeAgo(
+                      chat.message_list.at(-1)?.created_at.toString() ??
+                        new Date().toString()
+                    )}
+                  </div>
                 </div>
                 <Image
                   width={64}
