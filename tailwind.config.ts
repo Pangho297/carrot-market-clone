@@ -11,13 +11,13 @@ const config: Config = {
       fontFamily: {
         roboto: "var(--roboto-text)",
         rubik: "var(--rubik-text)",
-        metallica: "var(--metallica-text)"
+        metallica: "var(--metallica-text)",
       },
       padding: {
         myPadding: "32px",
       },
     },
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/forms"), require("tailwind-scrollbar-hide")],
 };
 export default config;

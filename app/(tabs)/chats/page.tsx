@@ -44,7 +44,7 @@ export default async function Chat() {
 
   const chatList = await getCachedChats(session.id!);
   return (
-    <div className="flex flex-col p-5">
+    <div className="flex flex-col">
       {chatList
         .filter((chat) => chat.message_list.length > 0)
         .sort(
