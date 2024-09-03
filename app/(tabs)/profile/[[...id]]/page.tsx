@@ -140,9 +140,13 @@ export default async function Profile({ params }: { params: { id: string } }) {
     }
     user = await getUser(id);
   }
+
   /** 로그아웃 (Inline Server Action) */
   const logout = async () => {
     "use server";
+    
+    // 클라이언트 에서 넘겨줄 수 없어서 이곳에서 session을 새로 할당하여 사용
+    const session = await getSession();
 
     session.destroy();
     redirect("/");
