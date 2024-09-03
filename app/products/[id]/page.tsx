@@ -218,15 +218,17 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
                 삭제하기
               </button>
             </form>
-            <Link
-              href={`/upload-product?id=${product.id}`}
-              className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white"
-            >
-              수정하기
-            </Link>
+            {!product.is_sold && (
+              <Link
+                href={`/upload-product?id=${product.id}`}
+                className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white"
+              >
+                수정하기
+              </Link>
+            )}
           </div>
         ) : null}
-        {isOwner ? null : (
+        {isOwner || product.is_sold ? null : (
           <form action={createChatRoom}>
             <button className="rounded-md bg-orange-500 px-5 py-2.5 font-semibold text-white">
               채팅

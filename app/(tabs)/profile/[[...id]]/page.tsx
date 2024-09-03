@@ -1,4 +1,5 @@
 import MyProductList from "@/components/MyProductList";
+import MyReviewList from "@/components/MyReviewList";
 import { PAGE_LIMIT } from "@/lib/constants";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
@@ -103,6 +104,102 @@ export type InitialSaleProducts = Prisma.PromiseReturnType<
   typeof getInitialSaleProductList
 >;
 
+async function getInitialTargetReviewList(id: number) {
+  const totalCount = await db.review.findMany({
+    where: {
+      target_id: id,
+    },
+    select: {
+      target_id: true,
+    },
+  });
+  const reviews = await db.review.findMany({
+    where: {
+      target_id: id,
+    },
+    select: {
+      target_id: true,
+      writer: {
+        select: {
+          username: true,
+          avatar: true,
+        },
+      },
+      payload: true,
+    },
+    take: PAGE_LIMIT,
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+
+  if (reviews) {
+    return { reviews, totalCount: totalCount.length };
+  }
+
+  notFound();
+}
+
+const getCachedInitialTargetReviewList = nextCache(
+  getInitialTargetReviewList,
+  ["target-review-list"],
+  {
+    tags: ["review-list"],
+  }
+);
+
+async function getInitialWriteReviewList(id: number) {
+  const totalCount = await db.review.findMany({
+    where: {
+      writer_id: id,
+    },
+    select: {
+      writer_id: true,
+    },
+  });
+  const reviews = await db.review.findMany({
+    where: {
+      writer_id: id,
+    },
+    select: {
+      writer_id: true,
+      target: {
+        select: {
+          username: true,
+          avatar: true,
+        },
+      },
+      payload: true,
+    },
+    take: PAGE_LIMIT,
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+
+  if (reviews) {
+    return { reviews, totalCount: totalCount.length };
+  }
+
+  notFound();
+}
+
+const getCachedInitialWriteReviewList = nextCache(
+  getInitialWriteReviewList,
+  ["target-review-list"],
+  {
+    tags: ["review-list"],
+  }
+);
+
+export type InitialTargetReviews = Prisma.PromiseReturnType<
+  typeof getInitialTargetReviewList
+>;
+
+export type InitialWriteReviews = Prisma.PromiseReturnType<
+  typeof getInitialWriteReviewList
+>;
+
 /**  로그인한 유저에 대한 정보 조회 */
 async function getUser(id: number) {
   if (id) {
@@ -132,6 +229,13 @@ export default async function Profile({ params }: { params: { id: string } }) {
     params.id ? id : me!
   );
 
+  const initialTargetReviews = await getCachedInitialTargetReviewList(
+    params.id ? id : me!
+  );
+  const initialWriteReviews = await getCachedInitialWriteReviewList(
+    params.id ? id : me!
+  );
+
   if (!id) {
     user = await getUser(me!);
   } else {
@@ -144,7 +248,7 @@ export default async function Profile({ params }: { params: { id: string } }) {
   /** 로그아웃 (Inline Server Action) */
   const logout = async () => {
     "use server";
-    
+
     // 클라이언트 에서 넘겨줄 수 없어서 이곳에서 session을 새로 할당하여 사용
     const session = await getSession();
 
@@ -186,15 +290,29 @@ export default async function Profile({ params }: { params: { id: string } }) {
           </div>
         ) : null}
       </div>
+      {/* 판매 중인 물품 */}
       <MyProductList
         initialProducts={initialSaleProducts}
         id={params.id ? id : me!}
         isSold={false}
       />
+      {/* 판매된 물품 */}
       <MyProductList
         initialProducts={initialSoldProducts}
         id={params.id ? id : me!}
         isSold={true}
+      />
+      {/* 작성한 리뷰 목록 */}
+      <MyReviewList
+        initialReviews={initialWriteReviews}
+        id={params.id ? id : me!}
+        isTarget={false}
+      />
+      {/* 받은 리뷰 목록 */}
+      <MyReviewList
+        initialReviews={initialTargetReviews}
+        id={params.id ? id : me!}
+        isTarget={true}
       />
     </div>
   );
