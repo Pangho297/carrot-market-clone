@@ -5,6 +5,9 @@ import db from "@/lib/db";
 
 export async function getMoreProducts(page: number) {
   const products = await db.product.findMany({
+    where: {
+      is_sold: false,
+    },
     select: {
       title: true,
       price: true,
