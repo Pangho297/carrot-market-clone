@@ -257,7 +257,7 @@ export default async function Profile({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="mb-[78px] flex flex-col">
       <div className="flex justify-between border-b border-neutral-400 p-5">
         <div className="flex items-center gap-5">
           {user.avatar ? (

@@ -135,6 +135,16 @@ export default async function Modal({ params }: { params: { id: string } }) {
               <PhotoIcon className="h-28" />
             )}
           </div>
+          {product.is_sold && (
+            <div className="absolute left-0 top-0 size-full">
+              <div className="relative size-full">
+                <div className="size-full bg-neutral-400 opacity-50" />
+                <div className="absolute bottom-5 left-5 flex size-40 items-center justify-center rounded-full ring-8 ring-white">
+                  <h1 className="text-4xl font-bold">판매완료</h1>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-3 border-b border-neutral-700 p-5">
             <div className="size-10 overflow-hidden rounded-full">
               {product.user.avatar !== null ? (

@@ -185,6 +185,18 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
           alt={product.title}
           className="object-cover"
         />
+        {product.is_sold && (
+          <div className="absolute left-0 top-0 size-full">
+            <div className="relative size-full">
+              <div className="size-full bg-neutral-300 opacity-50" />
+              <div className="absolute bottom-5 left-5 flex size-40 items-center justify-center rounded-full ring-8 ring-orange-400">
+                <h1 className="rotate-12 text-4xl font-bold text-orange-400">
+                  판매완료
+                </h1>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-3 border-b border-neutral-700 p-5">
         <div className="size-10 overflow-hidden rounded-full">

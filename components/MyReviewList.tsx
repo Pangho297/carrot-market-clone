@@ -84,11 +84,10 @@ export default function MyReviewList({
     return () => {
       observer.disconnect();
     };
-  }, [page, id]);
+  }, [page, id, isTarget]);
 
   const renderReview = (review: Review) => {
     const key = isTargetReview(review) ? review.target_id : review.writer_id;
-    console.log(review);
     return (
       <div key={key}>
         <div className="flex h-52 w-52 flex-col gap-2 rounded-md border border-neutral-600 p-4">
@@ -119,7 +118,7 @@ export default function MyReviewList({
             <div className="flex h-full flex-col justify-between">
               <p>{review.payload}</p>
               <div className="flex items-center justify-end gap-2">
-                <div className="text-xs text-neutral-400">대상</div>
+                <div className="text-xs text-neutral-400">사용자</div>
                 <div className="text-xs text-neutral-400">
                   {review.target?.username}
                 </div>
@@ -145,10 +144,9 @@ export default function MyReviewList({
   return (
     <div className="flex flex-col gap-5 p-5">
       <h3 className="text-2xl font-bold">
-        {isTarget ? "내가 받은 리뷰" : "내가 작성한 리뷰"} (
-        {reviewList.totalCount})
+        {isTarget ? "받은 리뷰" : "작성한 리뷰"} ({reviewList.totalCount})
       </h3>
-      <div className="scrollbar-hide flex max-w-screen-md gap-5 overflow-auto">
+      <div className="flex max-w-screen-md gap-5 overflow-auto scrollbar-hide">
         {reviewList.reviews.map(renderReview)}
         {!isLastPage && <span ref={trigger} />}
       </div>
