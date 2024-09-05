@@ -67,7 +67,19 @@ export default async function Chat() {
                     height={50}
                     src={
                       chat.user_list.filter((user) => user.id !== session.id)[0]
-                        .avatar ?? ""
+                        .avatar !== null
+                        ? chat.user_list
+                            .filter((user) => user.id !== session.id)[0]
+                            .avatar!.includes("imagedelivery")
+                          ? `${
+                              chat.user_list.filter(
+                                (user) => user.id !== session.id
+                              )[0].avatar
+                            }/avatar`
+                          : chat.user_list.filter(
+                              (user) => user.id !== session.id
+                            )[0].avatar ?? ""
+                        : ""
                     }
                     alt="chat_icon"
                     className="size-14 rounded-full"

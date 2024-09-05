@@ -145,7 +145,13 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
             <Image
               width={60}
               height={60}
-              src={roomOwner.avatar}
+              src={
+                roomOwner.avatar
+                  ? roomOwner.avatar.includes("imagedelivery")
+                    ? `${roomOwner.avatar}/avatar`
+                    : roomOwner.avatar
+                  : ""
+              }
               alt={roomOwner.username}
               className="size-16 rounded-full"
             />
