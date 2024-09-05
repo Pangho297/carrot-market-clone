@@ -264,9 +264,15 @@ export default async function Profile({ params }: { params: { id: string } }) {
             <Image
               width={50}
               height={50}
-              src={user.avatar ?? ""}
+              src={
+                user.avatar
+                  ? user.avatar.includes("imagedelivery")
+                    ? `${user.avatar}/public`
+                    : user.avatar
+                  : ""
+              }
               alt="chat_icon"
-              className="size-14 rounded-full"
+              className="size-14 rounded-full object-cover"
             />
           ) : (
             <UserIcon className="size-14 rounded-full text-neutral-50" />

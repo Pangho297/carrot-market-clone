@@ -82,7 +82,13 @@ export default function CommentList({
                     width={28}
                     height={28}
                     className="size-7 rounded-full"
-                    src={item.user.avatar}
+                    src={
+                      item.user.avatar
+                        ? item.user.avatar.includes("imagedelivery")
+                          ? `${item.user.avatar}/public`
+                          : item.user.avatar
+                        : ""
+                    }
                     alt={item.user.username}
                   />
                 ) : (

@@ -122,36 +122,42 @@ export default async function Modal({ params }: { params: { id: string } }) {
       <CloseModalBtn />
       <div className="flex h-full w-full max-w-screen-sm items-end justify-center">
         <div className="relative flex h-5/6 w-full flex-col rounded-t-2xl bg-neutral-900">
-          <div className="flex h-[640px] w-[640px] items-center justify-center overflow-hidden rounded-md bg-neutral-700 text-neutral-200">
+          <div className="relative flex items-center justify-center overflow-hidden rounded-md">
             {product.photo ? (
               <Image
                 width={640}
                 height={640}
                 src={`${product.photo}/public`}
                 alt={product.title}
-                className="object-cover"
+                className="h-[640px] w-[640px] object-cover"
               />
             ) : (
               <PhotoIcon className="h-28" />
             )}
-          </div>
-          {product.is_sold && (
-            <div className="absolute left-0 top-0 size-full">
-              <div className="relative size-full">
-                <div className="size-full bg-neutral-400 opacity-50" />
-                <div className="absolute bottom-5 left-5 flex size-40 items-center justify-center rounded-full ring-8 ring-white">
-                  <h1 className="text-4xl font-bold">판매완료</h1>
+            {product.is_sold && (
+              <div className="absolute left-0 top-0 size-full">
+                <div className="relative size-full">
+                  <div className="size-full bg-neutral-400 opacity-50" />
+                  <div className="absolute bottom-5 left-5 flex size-40 items-center justify-center rounded-full ring-8 ring-white">
+                    <h1 className="text-4xl font-bold">판매완료</h1>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           <div className="flex items-center gap-3 border-b border-neutral-700 p-5">
             <div className="size-10 overflow-hidden rounded-full">
               {product.user.avatar !== null ? (
                 <Image
                   width={40}
                   height={40}
-                  src={product.user.avatar}
+                  src={
+                    product.user.avatar
+                      ? product.user.avatar.includes("imagedelivery")
+                        ? `${product.user.avatar}/public`
+                        : product.user.avatar
+                      : ""
+                  }
                   alt={product.user.username}
                 />
               ) : (

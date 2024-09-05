@@ -108,7 +108,13 @@ export default function MessageList({
                   <Image
                     width={50}
                     height={50}
-                    src={message.user.avatar}
+                    src={
+                      message.user.avatar
+                        ? message.user.avatar.includes("imagedelivery")
+                          ? `${message.user.avatar}/public`
+                          : message.user.avatar
+                        : ""
+                    }
                     alt={message.user.username}
                     className="size-8 rounded-full"
                   />

@@ -104,9 +104,15 @@ export default function MyReviewList({
                   <Image
                     width={40}
                     height={40}
-                    src={review.writer?.avatar ?? ""}
+                    src={
+                      review.writer.avatar
+                        ? review.writer.avatar.includes("imagedelivery")
+                          ? `${review.writer.avatar}/avatar`
+                          : review.writer.avatar
+                        : ""
+                    }
                     alt={review.writer?.username ?? ""}
-                    className="size-5"
+                    className="size-5 rounded-full"
                   />
                 ) : (
                   <UserIcon className="size-5" />
@@ -126,9 +132,15 @@ export default function MyReviewList({
                   <Image
                     width={40}
                     height={40}
-                    src={review.target?.avatar ?? ""}
+                    src={
+                      review.target.avatar
+                        ? review.target.avatar.includes("imagedelivery")
+                          ? `${review.target.avatar}/avatar`
+                          : review.target.avatar
+                        : ""
+                    }
                     alt={review.target?.username ?? ""}
-                    className="size-5"
+                    className="size-5 rounded-full"
                   />
                 ) : (
                   <UserIcon className="size-5" />

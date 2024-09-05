@@ -204,7 +204,13 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
             <Image
               width={40}
               height={40}
-              src={product.user.avatar}
+              src={
+                product.user.avatar
+                  ? product.user.avatar.includes("imagedelivery")
+                    ? `${product.user.avatar}/public`
+                    : product.user.avatar
+                  : ""
+              }
               alt={product.user.username}
             />
           ) : (

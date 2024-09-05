@@ -160,7 +160,13 @@ export default async function PostDetail({
             width={28}
             height={28}
             className="size-7 rounded-full"
-            src={post.user.avatar}
+            src={
+              post.user.avatar
+                ? post.user.avatar.includes("imagedelivery")
+                  ? `${post.user.avatar}/public`
+                  : post.user.avatar
+                : ""
+            }
             alt={post.user.username}
           />
         ) : (
