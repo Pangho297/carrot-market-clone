@@ -3,7 +3,7 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, Suspense, useEffect, useState } from "react";
 import {
   getProduct,
   getUploadUrl,
@@ -60,7 +60,6 @@ export default function UploadProduct() {
     // Cloudflare에 이미지 업로드
     // 파일 업로드 안된경우 방지
     if (!isModify) {
-      
       if (!file) {
         return;
       }
@@ -136,7 +135,7 @@ export default function UploadProduct() {
   };
 
   return (
-    <div>
+    <Suspense>
       <form className="flex flex-col gap-5 p-5" action={onValid}>
         <label
           htmlFor="photo"
@@ -185,6 +184,6 @@ export default function UploadProduct() {
         />
         <Button>올리기</Button>
       </form>
-    </div>
+    </Suspense>
   );
 }
