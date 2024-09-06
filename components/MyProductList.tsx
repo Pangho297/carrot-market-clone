@@ -60,7 +60,7 @@ export default function MyProductList({
     return () => {
       observer.disconnect();
     };
-  }, [page, id]);
+  }, [page, id, isSold]);
 
   return (
     <div className="flex flex-col gap-5 p-5">

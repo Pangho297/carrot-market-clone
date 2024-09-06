@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ProductFormType, productSchema } from "./schema";
 import { useSearchParams } from "next/navigation";
 
-export default function UploadProduct() {
+export function UploadForm() {
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -135,7 +135,7 @@ export default function UploadProduct() {
   };
 
   return (
-    <Suspense>
+    <div>
       <form className="flex flex-col gap-5 p-5" action={onValid}>
         <label
           htmlFor="photo"
@@ -184,6 +184,14 @@ export default function UploadProduct() {
         />
         <Button>올리기</Button>
       </form>
+    </div>
+  );
+}
+
+export default function UploadProduct() {
+  return (
+    <Suspense>
+      <UploadForm />
     </Suspense>
   );
 }
