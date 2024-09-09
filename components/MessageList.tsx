@@ -24,6 +24,8 @@ export default function MessageList({
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
   const channel = useRef<RealtimeChannel>();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement>(null);
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {
@@ -69,6 +71,7 @@ export default function MessageList({
     });
 
     setMessage("");
+    scrollRef.current?.scrollTo(0, targetRef.current?.offsetHeight ?? 0);
   };
 
   useEffect(() => {
@@ -95,8 +98,14 @@ export default function MessageList({
   }, [channelId]);
 
   return (
-    <div className="h-full p-5 pb-20">
-      <div className="flex flex-col justify-end gap-5">
+    <div
+      ref={scrollRef}
+      className="relative max-h-[calc(100dvh_-_200px)] min-h-[calc(100dvh_-_200px)] overflow-auto p-5 pb-0"
+    >
+      <div
+        ref={targetRef}
+        className="flex min-h-[calc(100dvh_-_300px)] flex-col justify-end gap-5"
+      >
         {messages.map((message) => (
           <div
             key={message.id}
@@ -139,7 +148,7 @@ export default function MessageList({
         ))}
       </div>
       <form
-        className="fixed bottom-0 left-0 flex w-full max-w-screen-md bg-neutral-900 p-5"
+        className="sticky bottom-0 left-0 flex w-full max-w-screen-md bg-neutral-900 py-5"
         onSubmit={onSubmit}
       >
         <input
@@ -149,10 +158,10 @@ export default function MessageList({
           onChange={onChange}
           value={message}
           autoComplete="off"
-          className="placeholder: h-10 w-full rounded-full border-none bg-transparent px-5 text-neutral-200 ring-2 ring-neutral-200 transition focus:outline-none focus:ring-4 focus:ring-neutral-50"
+          className="placeholder: h-10 w-full rounded-full border-none bg-transparent text-neutral-200 ring-2 ring-neutral-200 transition focus:outline-none focus:ring-4 focus:ring-neutral-50"
         />
         <button type="submit">
-          <ArrowUpCircleIcon className="absolute right-5 top-5 size-10" />
+          <ArrowUpCircleIcon className="absolute right-0 top-5 size-10" />
         </button>
       </form>
     </div>

@@ -138,7 +138,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const isOwner = product.user_id === session.id;
 
   return (
-    <div className="relative min-h-full">
+    <div className="relative min-h-screen">
       <div className="sticky top-0 h-full w-full items-center gap-5 bg-neutral-800 p-5">
         <div className="mb-4 flex items-center gap-5">
           <Link href={`/profile/${roomOwner.id}`}>
