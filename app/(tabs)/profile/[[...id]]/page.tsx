@@ -278,7 +278,10 @@ export default async function Profile({ params }: { params: { id: string } }) {
           ) : (
             <UserIcon className="size-14 rounded-full text-neutral-50" />
           )}
-          <h1>{user?.username}님 환영합니다!</h1>
+          <h1 className="text-2xl font-bold">
+            {user?.username}
+            {!id || me === id ? "님 환영합니다!" : ""}
+          </h1>
         </div>
         {!params.id ? (
           <div className="flex items-center gap-5">

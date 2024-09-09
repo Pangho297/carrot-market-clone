@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 /** 좋아요 추가 */
 export async function likePost(post_id: number) {
-  await new Promise((r) => setTimeout(r, 10000)); // useOptimistic 테스트를 위해 강제로 느려지게 만듬
+  // await new Promise((r) => setTimeout(r, 10000)); // useOptimistic 테스트를 위해 강제로 느려지게 만듬
   try {
     const session = await getSession();
 
@@ -29,7 +29,7 @@ export async function likePost(post_id: number) {
 
 /** 좋아요 삭제 */
 export async function dislikePost(post_id: number) {
-  await new Promise((r) => setTimeout(r, 10000)); // useOptimistic 테스트를 위해 강제로 느려지게 만듬
+  // await new Promise((r) => setTimeout(r, 10000)); // useOptimistic 테스트를 위해 강제로 느려지게 만듬
   try {
     const session = await getSession();
 
@@ -50,7 +50,7 @@ export async function dislikePost(post_id: number) {
 }
 
 export async function createComment(formData: FormData) {
-  await new Promise((r) => setTimeout(r, 10000));
+  // await new Promise((r) => setTimeout(r, 10000));
   const data = {
     payload: formData.get("payload"),
     user_id: formData.get("user_id"),

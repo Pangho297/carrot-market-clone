@@ -198,28 +198,32 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-3 border-b border-neutral-700 p-5">
-        <div className="size-10 overflow-hidden rounded-full">
-          {product.user.avatar !== null ? (
-            <Image
-              width={40}
-              height={40}
-              src={
-                product.user.avatar
-                  ? product.user.avatar.includes("imagedelivery")
-                    ? `${product.user.avatar}/public`
-                    : product.user.avatar
-                  : ""
-              }
-              alt={product.user.username}
-            />
-          ) : (
-            <UserIcon />
-          )}
-        </div>
-        <div>
-          <h3>{product.user.username}</h3>
-        </div>
+      <div className="border-b border-neutral-700 p-5">
+        <Link href={`/profile/${product.user_id}`} className="flex max-w-fit">
+          <div className="flex w-fit items-center gap-3 text-white">
+            <div className="size-10 overflow-hidden rounded-full">
+              {product.user.avatar !== null ? (
+                <Image
+                  width={40}
+                  height={40}
+                  src={
+                    product.user.avatar
+                      ? product.user.avatar.includes("imagedelivery")
+                        ? `${product.user.avatar}/public`
+                        : product.user.avatar
+                      : ""
+                  }
+                  alt={product.user.username}
+                />
+              ) : (
+                <UserIcon />
+              )}
+            </div>
+            <div>
+              <h3>{product.user.username}</h3>
+            </div>
+          </div>
+        </Link>
       </div>
       <div className="p-5">
         <h1 className="text-2xl font-semibold">{product.title}</h1>

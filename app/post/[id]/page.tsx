@@ -9,6 +9,7 @@ import { Prisma } from "@prisma/client";
 import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
 
 async function getPost(id: number) {
   try {
@@ -154,31 +155,33 @@ export default async function PostDetail({
 
   return (
     <div className="flex flex-col p-5 text-white">
-      <div className="mb-2 flex items-center gap-2">
-        {post.user.avatar ? (
-          <Image
-            width={28}
-            height={28}
-            className="size-7 rounded-full"
-            src={
-              post.user.avatar
-                ? post.user.avatar.includes("imagedelivery")
-                  ? `${post.user.avatar}/public`
-                  : post.user.avatar
-                : ""
-            }
-            alt={post.user.username}
-          />
-        ) : (
-          <UserIcon className="size-7 rounded-full" />
-        )}
-        <div>
-          <span className="text-sm font-semibold">{post.user.username}</span>
-          <div className="text-xs">
-            <span>{formatToTimeAgo(post.created_at.toString())}</span>
+      <Link href={`/profile/${post.user_id}`} className="flex w-fit text-white">
+        <div className="mb-2 flex items-center gap-2">
+          {post.user.avatar ? (
+            <Image
+              width={28}
+              height={28}
+              className="size-7 rounded-full"
+              src={
+                post.user.avatar
+                  ? post.user.avatar.includes("imagedelivery")
+                    ? `${post.user.avatar}/public`
+                    : post.user.avatar
+                  : ""
+              }
+              alt={post.user.username}
+            />
+          ) : (
+            <UserIcon className="size-7 rounded-full" />
+          )}
+          <div>
+            <span className="text-sm font-semibold">{post.user.username}</span>
+            <div className="text-xs">
+              <span>{formatToTimeAgo(post.created_at.toString())}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
       <h2 className="mb-2 text-lg font-semibold">{post.title}</h2>
       <p className="mb-5">{post.description}</p>
       <div className="flex flex-col items-start gap-5">

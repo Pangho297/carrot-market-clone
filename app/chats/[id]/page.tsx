@@ -141,27 +141,34 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
     <div className="relative min-h-full">
       <div className="sticky top-0 h-full w-full items-center gap-5 bg-neutral-800 p-5">
         <div className="mb-4 flex items-center gap-5">
-          {roomOwner.avatar ? (
-            <Image
-              width={60}
-              height={60}
-              src={
-                roomOwner.avatar
-                  ? roomOwner.avatar.includes("imagedelivery")
-                    ? `${roomOwner.avatar}/avatar`
-                    : roomOwner.avatar
-                  : ""
-              }
-              alt={roomOwner.username}
-              className="size-16 rounded-full"
-            />
-          ) : (
-            <UserIcon className="size-16 rounded-full" />
-          )}
-          <h1 className="text-2xl">{roomOwner.username}</h1>
+          <Link href={`/profile/${roomOwner.id}`}>
+            <div className="flex items-center gap-5 text-white">
+              {roomOwner.avatar ? (
+                <Image
+                  width={60}
+                  height={60}
+                  src={
+                    roomOwner.avatar
+                      ? roomOwner.avatar.includes("imagedelivery")
+                        ? `${roomOwner.avatar}/avatar`
+                        : roomOwner.avatar
+                      : ""
+                  }
+                  alt={roomOwner.username}
+                  className="size-16 rounded-full"
+                />
+              ) : (
+                <UserIcon className="size-16 rounded-full" />
+              )}
+              <h1 className="text-2xl font-bold">{roomOwner.username}</h1>
+            </div>
+          </Link>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex gap-5">
+          <Link
+            href={`/products/${product.id}`}
+            className="flex gap-5 text-white"
+          >
             <Image
               width={64}
               height={80}
@@ -175,7 +182,7 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
               <h1>{product.title}</h1>
               <span>{product.price.toLocaleString("ko-KR")}원</span>
             </div>
-          </div>
+          </Link>
           {isOwner ? (
             <SoldButton product={product} />
           ) : !isOwner &&

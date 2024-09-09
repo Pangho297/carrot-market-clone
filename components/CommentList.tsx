@@ -11,6 +11,7 @@ import Image from "next/image";
 import { Suspense, useOptimistic, useState } from "react";
 import { useForm } from "react-hook-form";
 import Textarea from "./Textarea";
+import Link from "next/link";
 
 interface CommentListProps {
   comments: CommentListType;
@@ -78,24 +79,29 @@ export default function CommentList({
           >
             <div>
               <div className="flex items-center gap-2">
-                {item.user.avatar ? (
-                  <Image
-                    width={28}
-                    height={28}
-                    className="size-7 rounded-full"
-                    src={
-                      item.user.avatar
-                        ? item.user.avatar.includes("imagedelivery")
-                          ? `${item.user.avatar}/public`
-                          : item.user.avatar
-                        : ""
-                    }
-                    alt={item.user.username}
-                  />
-                ) : (
-                  <UserIcon className="size-7 rounded-full" />
-                )}
-                <span className="text-xs">{item.user.username}</span>
+                <Link
+                  href={`/profile/${item.user.id}`}
+                  className="flex items-center gap-2 text-white"
+                >
+                  {item.user.avatar ? (
+                    <Image
+                      width={28}
+                      height={28}
+                      className="size-7 rounded-full"
+                      src={
+                        item.user.avatar
+                          ? item.user.avatar.includes("imagedelivery")
+                            ? `${item.user.avatar}/public`
+                            : item.user.avatar
+                          : ""
+                      }
+                      alt={item.user.username}
+                    />
+                  ) : (
+                    <UserIcon className="size-7 rounded-full" />
+                  )}
+                  <span className="text-xs">{item.user.username}</span>
+                </Link>
                 <p className="text-xs text-neutral-400">
                   {formatToTimeAgo(item.created_at.toString())}
                 </p>

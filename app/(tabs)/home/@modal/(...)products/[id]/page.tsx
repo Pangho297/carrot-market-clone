@@ -8,8 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-new Promise((resolve) => setTimeout(resolve, 10000));
-
 async function getIsOwner(user_id: number) {
   const session = await getSession();
   return session.id === user_id;
@@ -145,28 +143,33 @@ export default async function Modal({ params }: { params: { id: string } }) {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-3 border-b border-neutral-700 p-5">
-            <div className="size-10 overflow-hidden rounded-full">
-              {product.user.avatar !== null ? (
-                <Image
-                  width={40}
-                  height={40}
-                  src={
-                    product.user.avatar
-                      ? product.user.avatar.includes("imagedelivery")
-                        ? `${product.user.avatar}/public`
-                        : product.user.avatar
-                      : ""
-                  }
-                  alt={product.user.username}
-                />
-              ) : (
-                <UserIcon />
-              )}
-            </div>
-            <div>
-              <h3>{product.user.username}</h3>
-            </div>
+          <div className="border-b border-neutral-700 p-5">
+            <Link
+              href={`/profile/${product.user_id}`}
+              className="flex w-fit items-center gap-3 text-white"
+            >
+              <div className="size-10 overflow-hidden rounded-full">
+                {product.user.avatar !== null ? (
+                  <Image
+                    width={40}
+                    height={40}
+                    src={
+                      product.user.avatar
+                        ? product.user.avatar.includes("imagedelivery")
+                          ? `${product.user.avatar}/public`
+                          : product.user.avatar
+                        : ""
+                    }
+                    alt={product.user.username}
+                  />
+                ) : (
+                  <UserIcon />
+                )}
+              </div>
+              <div>
+                <h3>{product.user.username}</h3>
+              </div>
+            </Link>
           </div>
           <div className="p-5">
             <h1 className="text-2xl font-semibold">{product.title}</h1>
