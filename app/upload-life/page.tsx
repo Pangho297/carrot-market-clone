@@ -31,8 +31,8 @@ export default function UploadLife() {
   };
 
   return (
-    <div className="flex h-full min-h-screen p-5">
-      <form action={onValid} className="flex h-full w-full flex-col gap-4">
+    <div className="flex min-h-screen p-5">
+      <form action={onValid} className="flex w-full flex-col gap-4">
         <Input
           {...register("title")}
           required

@@ -16,7 +16,7 @@ const _Textarea = (
 ) => {
   return (
     <div
-      className={`flex flex-col gap-2 ${height ? `h-${height}` : "h-52"} relative`}
+      className={`flex flex-col gap-2 ${height ? `h-${height}` : "h-52"} relative w-full`}
     >
       <textarea
         className={`h-full w-full rounded-md border-none bg-transparent ring-2 ring-neutral-200 transition placeholder:text-neutral-400 focus:outline-none focus:ring-4 focus:ring-orange-500 ${rest.className} resize-none`}

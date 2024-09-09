@@ -10,6 +10,7 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { Suspense, useOptimistic, useState } from "react";
 import { useForm } from "react-hook-form";
+import Textarea from "./Textarea";
 
 interface CommentListProps {
   comments: CommentListType;
@@ -115,7 +116,7 @@ export default function CommentList({
       </Suspense>
       <form className="mt-4 flex gap-4" action={() => onSubmit()}>
         <textarea
-          className="flex-3 w-full resize-none rounded-md bg-inherit"
+          className="flex-3 h-full w-full resize-none rounded-md border-none bg-transparent ring-2 ring-neutral-200 transition placeholder:text-neutral-400 focus:outline-none focus:ring-4 focus:ring-orange-500"
           {...register("payload")}
           required
           placeholder="모두와 함께하는 공간입니다 타인을 배려하는 마음으로 댓글을 남겨주세요"
