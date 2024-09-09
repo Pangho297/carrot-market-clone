@@ -67,25 +67,31 @@ export default function MyProductList({
       <h3 className="text-2xl font-bold">
         {isSold ? "판매된 물품" : "판매 중인 물품"} ({productList.totalCount})
       </h3>
-      <div className="scrollbar-hide flex max-w-screen-md gap-5 overflow-auto">
-        {productList.products.map((product) => (
-          <Link href={`/products/${product.id}`} key={product.id}>
-            <div className="flex h-[316px] w-52 flex-col gap-2">
-              <Image
-                width={208}
-                height={208}
-                src={`${product.photo}/public`}
-                alt={product.title}
-                className="h-[258px] w-52 rounded-md object-cover"
-              />
+      <div className="flex max-w-screen-md gap-5 overflow-auto scrollbar-hide">
+        {productList.products.length !== 0 ? (
+          productList.products.map((product) => (
+            <Link href={`/products/${product.id}`} key={product.id}>
+              <div className="flex h-[316px] w-52 flex-col gap-2">
+                <Image
+                  width={208}
+                  height={208}
+                  src={`${product.photo}/public`}
+                  alt={product.title}
+                  className="h-[258px] w-52 rounded-md object-cover"
+                />
 
-              <p className="text-xl font-bold text-white">{product.title}</p>
-              <p className="text-neutral-400">
-                {product.price.toLocaleString("ko-KR")} 원
-              </p>
-            </div>
-          </Link>
-        ))}
+                <p className="text-xl font-bold text-white">{product.title}</p>
+                <p className="text-neutral-400">
+                  {product.price.toLocaleString("ko-KR")} 원
+                </p>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <div className="w-full rounded-md border border-neutral-600 p-4 text-center">
+            상품을 찾을 수 없습니다
+          </div>
+        )}
         {!isLastPage && <span ref={trigger} />}
       </div>
     </div>

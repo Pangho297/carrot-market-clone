@@ -9,6 +9,7 @@ import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 
 async function getInitialSaleProductList(id: number) {
   if (id) {
@@ -257,8 +258,8 @@ export default async function Profile({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="mb-[78px] flex flex-col">
-      <div className="flex justify-between border-b border-neutral-400 p-5">
+    <div className="relative flex flex-col">
+      <div className="sticky top-0 flex justify-between border-b border-neutral-400 bg-neutral-900 p-5">
         <div className="flex items-center gap-5">
           {user.avatar ? (
             <Image
@@ -296,30 +297,70 @@ export default async function Profile({ params }: { params: { id: string } }) {
           </div>
         ) : null}
       </div>
-      {/* 판매 중인 물품 */}
-      <MyProductList
-        initialProducts={initialSaleProducts}
-        id={params.id ? id : me!}
-        isSold={false}
-      />
-      {/* 판매된 물품 */}
-      <MyProductList
-        initialProducts={initialSoldProducts}
-        id={params.id ? id : me!}
-        isSold={true}
-      />
-      {/* 작성한 리뷰 목록 */}
-      <MyReviewList
-        initialReviews={initialWriteReviews}
-        id={params.id ? id : me!}
-        isTarget={false}
-      />
-      {/* 받은 리뷰 목록 */}
-      <MyReviewList
-        initialReviews={initialTargetReviews}
-        id={params.id ? id : me!}
-        isTarget={true}
-      />
+      <Suspense
+        fallback={
+          <div className="animate-pulse">
+            <div className="flex h-[316px] w-52 flex-col justify-start gap-2">
+              <div className="h-[258px] rounded-md bg-neutral-700" />
+              <div className="h-7 w-full rounded-md bg-neutral-700" />
+              <div className="h-6 w-1/2 rounded-md bg-neutral-700" />
+            </div>
+          </div>
+        }
+      >
+        {/* 판매 중인 물품 */}
+        <MyProductList
+          initialProducts={initialSaleProducts}
+          id={params.id ? id : me!}
+          isSold={false}
+        />
+      </Suspense>
+      <Suspense
+        fallback={
+          <div className="animate-pulse">
+            <div className="flex h-[316px] w-52 flex-col justify-start gap-2">
+              <div className="h-[258px] rounded-md bg-neutral-700" />
+              <div className="h-7 w-full rounded-md bg-neutral-700" />
+              <div className="h-6 w-1/2 rounded-md bg-neutral-700" />
+            </div>
+          </div>
+        }
+      >
+        {/* 판매된 물품 */}
+        <MyProductList
+          initialProducts={initialSoldProducts}
+          id={params.id ? id : me!}
+          isSold={true}
+        />
+      </Suspense>
+      <Suspense
+        fallback={
+          <div className="animate-pulse">
+            <div className="size-52 rounded-md bg-neutral-700" />
+          </div>
+        }
+      >
+        {/* 작성한 리뷰 목록 */}
+        <MyReviewList
+          initialReviews={initialWriteReviews}
+          id={params.id ? id : me!}
+          isTarget={false}
+        />
+      </Suspense>
+      <Suspense
+        fallback={
+          <div className="animate-pulse">
+            <div className="size-52 rounded-md bg-neutral-700" />
+          </div>
+        }
+      >
+        {/* 받은 리뷰 목록 */}
+        <MyReviewList
+          initialReviews={initialTargetReviews}
+          id={params.id ? id : me!}
+          isTarget={true}
+        />
+      </Suspense>
     </div>
   );
 }

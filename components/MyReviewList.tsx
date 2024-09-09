@@ -90,7 +90,7 @@ export default function MyReviewList({
     const key = isTargetReview(review) ? review.target_id : review.writer_id;
     return (
       <div key={key}>
-        <div className="flex h-52 w-52 flex-col gap-2 rounded-md border border-neutral-600 p-4">
+        <div className="flex size-52 flex-col gap-2 rounded-md border border-neutral-600 p-4">
           {isTargetReview(review) ? (
             // 사용자에게 리뷰를 작성한 사람
             <div className="flex h-full flex-col justify-between">
@@ -159,7 +159,13 @@ export default function MyReviewList({
         {isTarget ? "받은 리뷰" : "작성한 리뷰"} ({reviewList.totalCount})
       </h3>
       <div className="flex max-w-screen-md gap-5 overflow-auto scrollbar-hide">
-        {reviewList.reviews.map(renderReview)}
+        {reviewList.reviews.length !== 0 ? (
+          reviewList.reviews.map(renderReview)
+        ) : (
+          <div className="w-full rounded-md border border-neutral-600 p-4 text-center">
+            리뷰를 찾을 수 없습니다
+          </div>
+        )}
         {!isLastPage && <span ref={trigger} />}
       </div>
     </div>

@@ -139,7 +139,7 @@ export default function MessageList({
         ))}
       </div>
       <form
-        className="fixed bottom-0 flex w-full max-w-screen-md bg-neutral-900 p-5"
+        className="fixed bottom-0 left-0 flex w-full max-w-screen-md bg-neutral-900 p-5"
         onSubmit={onSubmit}
       >
         <input

@@ -60,12 +60,14 @@ export default function ProductList({ initialProducts }: ProductListProps) {
       {!isLastPage ? (
         <span
           ref={trigger}
-          className="mx-auto w-fit rounded-md bg-orange-500 px-3 py-2 text-center text-sm font-semibold hover:opacity-90 active:scale-95"
+          className="w-full rounded-md border border-orange-500 p-4 text-center"
         >
           {isLoading ? "불러오는 중..." : "더 보기"}
         </span>
       ) : (
-        <div className="w-full text-center">상품을 찾을 수 없습니다</div>
+        <div className="w-full rounded-md border border-neutral-600 p-4 text-center">
+          상품을 찾을 수 없습니다
+        </div>
       )}
     </div>
   );

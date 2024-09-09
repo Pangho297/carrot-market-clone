@@ -177,7 +177,7 @@ export default async function ProductDetail({ params }: ProductDetailProps) {
   };
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full min-h-screen">
       <div className="relative aspect-square">
         <Image
           fill
